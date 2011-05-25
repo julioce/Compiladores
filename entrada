@@ -1,6 +1,6 @@
 do
   
-  if( adasd == "45" ) do
+  if( true ) do
     boolean = true
     print( 'To no if' )
   else

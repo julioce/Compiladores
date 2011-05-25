@@ -19,26 +19,23 @@ struct Atributos {
 #define YYSTYPE Atributos
 %}
 
-%token _ID _INTEIRO _DOUBLE _BOOLEAN _STRING _DO _END
+%token _ID _DO _END
+%token _INTEIRO _DOUBLE _BOOLEAN _STRING
 %token _PRINT _IF _ELSE
-%token _MENORIGUAL _MAIORIGUAL _IGUAL _DIFERENTE
-%token _AND _OR
+%token _MENORIGUAL _MAIORIGUAL _IGUAL _DIFERENTE _AND _OR
 
 %left _AND
 %left _OR
 %nonassoc '<' '>' _MENORIGUAL _MAIORIGUAL _IGUAL _DIFERENTE
 %left '+' '-'
-%left '*' '/'
+%left '*' '/' '%'
 %right '^'
 
 %start PROGRAMA
 
 %%
 /*
-Bloco principal do programa no formato:
-do
- <qualquer coisa>
-end
+Bloco principal do programa:
 */
 PROGRAMA : BLOCO_PRINCIPAL { cout << "\nSintaxe OK!" << endl; }
          ;
@@ -86,6 +83,8 @@ CMD_EVAL : _ID
          | _DOUBLE CMD_CPR _INTEIRO
          | _ID _IGUAL _STRING
          | _ID _DIFERENTE _STRING
+         | _STRING _IGUAL _STRING
+         | _STRING _DIFERENTE _STRING
          ;
 CMD_CPR : '<'
         | '>' 
@@ -99,7 +98,8 @@ CMD_CPR : '<'
 
 void yyerror( const char* st )
 {
-  cout << "Erro sintatico: " << st << endl;
+  cout << "Erro sintatico: " << st << endl
+       << "Proximo a: " << yytext << endl;
 }
 
 string toStr( int n ) {

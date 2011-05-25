@@ -8,7 +8,7 @@ PLICS   "\'"
 STRING  ({ASPAS}|{PLICS})([^'"\n]|[\\][\"]|[\\][\'])*({ASPAS}|{PLICS})
 
 DOUBLE  {NUMERO}+("."{NUMERO}*)?
-INTEIRO {NUMERO}+{NUMERO}*
+INTEIRO {NUMERO}+
 BOOLEAN (([Tt][Rr][Uu][Ee])|([Ff][Aa][Ll][Ss][Ee]))
 ID      {LETRA}({LETRA}|{NUMERO})*
 
