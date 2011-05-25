@@ -1,9 +1,10 @@
 do
   
-  oda = "ola"
-
-  print( 'Hello, world!' )
-
-  if( 'Hello, world!' ) do
+  if( adasd ) do
+    boolean = true
+    print( 'To no if' )
+  else
+    print( 'To no else' )
   end
+
 end

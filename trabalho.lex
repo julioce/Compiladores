@@ -2,11 +2,14 @@ DELIM   [\t\n ]
 NUMERO  [0-9]
 LETRA   [A-Za-z_]
 
-ASPAS  "\""
-PLICS  "\'"
+ASPAS   "\""
+PLICS   "\'"
+
 STRING  ({ASPAS}|{PLICS})([^'"\n]|[\\][\"]|[\\][\'])*({ASPAS}|{PLICS})
 
-INTEIRO {NUMERO}+("."{NUMERO}*)?
+DOUBLE  {NUMERO}+("."{NUMERO}*)?
+INTEIRO {NUMERO}+{NUMERO}*
+BOOLEAN (([Tt][Rr][Uu][Ee])|([Ff][Aa][Ll][Ss][Ee]))
 ID      {LETRA}({LETRA}|{NUMERO})*
 
 
@@ -32,6 +35,8 @@ PRINT   [Pp][Rr][Ii][Nn][Tt]
 
 {STRING}  { return _STRING; }
 {INTEIRO} { return _INTEIRO; }
+{DOUBLE}  { return _DOUBLE; }
+{BOOLEAN} { return _BOOLEAN; }
 {ID}      { return _ID; }
 
 .         { return *yytext; }

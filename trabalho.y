@@ -19,7 +19,7 @@ struct Atributos {
 #define YYSTYPE Atributos
 %}
 
-%token _ID _INTEIRO _STRING _DO _END
+%token _ID _INTEIRO _DOUBLE _BOOLEAN _STRING _DO _END
 %token _PRINT _IF _ELSE
 
 %start PROGRAMA
@@ -54,14 +54,19 @@ CMD : CMD_ID
 /*Comandos de Identificadores*/
 CMD_ID : _ID '=' _STRING
        | _ID '=' _INTEIRO
+       | _ID '=' _DOUBLE
+       | _ID '=' _BOOLEAN
        ;
 /*Comandos de Saida*/
 CMD_SAIDA : _PRINT '(' _STRING ')'
           ;
 /*Comandos de Controle*/
-CMD_IF_ELSE : _IF '(' _STRING ')' _DO CMDS _END
-       |  _IF '(' _STRING ')' _DO CMDS _ELSE CMDS _END
-       ;
+CMD_IF_ELSE : _IF '(' CMD_EVAL ')' _DO CMDS _END
+            | _IF '(' CMD_EVAL ')' _DO CMDS _ELSE CMDS _END
+            ;
+CMD_EVAL : _ID
+         | _BOOLEAN
+         ;
 
 %%
 #include "lex.yy.c"
