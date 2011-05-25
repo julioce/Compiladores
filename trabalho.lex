@@ -39,6 +39,14 @@ PRINT   [Pp][Rr][Ii][Nn][Tt]
 {BOOLEAN} { return _BOOLEAN; }
 {ID}      { return _ID; }
 
+"<="  { return _MENORIGUAL; }
+">="  { return _MAIORIGUAL; }
+"=="  { return _IGUAL; }
+"!="  { return _DIFERENTE; }
+
+"&&"  { return _AND; }
+"||"  { return _OR; }
+
 .         { return *yytext; }
 
 %%
