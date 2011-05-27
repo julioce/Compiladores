@@ -2,6 +2,9 @@ var
   str1, str2 : string
   double1, double2 : double
 
+function str : string
+end
+
 function maxInt(int1 : integer, int2 : integer) : integer
 end
 
@@ -13,12 +16,15 @@ function maxDouble(double1 : double, double2 : double) : double
   end
 end
 
-function str : string
-end
-
 begin
 
   print(str1)
   print(str2)
+
+  for(i=0; i<10; i+1)
+  end
+
+  while( fsdf )
+  end
 
 end

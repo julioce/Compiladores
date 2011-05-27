@@ -23,7 +23,7 @@ struct Atributos {
 %token _BEGIN _DO _END
 %token _VAR _INTEGER _DOUBLE _CHAR _STRING _BOOLEAN _FUNCTION
 %token _AND _OR _NOT
-%token _IF _ELSE _PRINT
+%token _IF _ELSE _FOR _WHILE _PRINT
 %token _ATRIBUICAO _MENORIGUAL _MAIORIGUAL _IGUAL _DIFERENTE 
 %token _ID
 
@@ -31,7 +31,7 @@ struct Atributos {
 %left _AND
 %nonassoc '<' '>' _MENORIGUAL _MAIORIGUAL _IGUAL _DIFERENTE
 %left '+' '-'
-%left '*' '/' '%'
+%left '*' '/' '%' '^'
 
 %start PROGRAMA
 
@@ -87,6 +87,8 @@ CMDS : CMDS CMD
 CMD : CMD_ATRIB 
     | CMD_SAIDA
     | CMD_IF_ELSE
+    | CMD_FOR
+    | CMD_WHILE
     ; 
     
 /*Comandos de Atribuição*/
@@ -98,13 +100,20 @@ CMD_SAIDA : _PRINT '(' E ')'
 /*Comando de Controle*/
 CMD_IF_ELSE : _IF '(' E ')' CMDS _END
             | _IF '(' E ')' CMDS _ELSE CMDS _END
-            ; 
+            ;
+/*Comando de Iteração*/
+CMD_FOR : _FOR '(' CMD_ATRIB ';' E ';' E ')' CMDS _END
+        ;
+CMD_WHILE : _WHILE '(' E ')' CMDS _END
+          | _WHILE '(' _VALUE_BOOLEAN ')' CMDS _END
+          ; 
 /*Operações*/
 E : E '+' E
   | E '-' E
   | E '*' E
   | E '/' E
   | E '%' E
+  | E '^' E
   | E '<' E
   | E '>' E
   | E _MENORIGUAL E
@@ -132,8 +141,7 @@ VALUE : _VALUE_INTEGER
       | _VALUE_CHAR
       | _VALUE_STRING
       | _VALUE_BOOLEAN
-      ; 
-      
+      ;
 TIPOS : _INTEGER
       | _DOUBLE
       | _CHAR

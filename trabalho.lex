@@ -30,6 +30,8 @@ NOT           [Nn][Oo][Tt]
 
 IF            [Ii][Ff]
 ELSE          [Ee][Ll][Ss][Ee]
+FOR           [Ff][Oo][Rr]
+WHILE         [Ww][Hh][Ii][Ll][Ee]
 PRINT         [Pp][Rr][Ii][Nn][Tt]
  
 %%
@@ -60,6 +62,8 @@ PRINT         [Pp][Rr][Ii][Nn][Tt]
 
 {IF}            { return _IF; }
 {ELSE}          { return _ELSE; }
+{FOR}           { return _FOR; }
+{WHILE}         { return _WHILE; } 
 {PRINT}         { return _PRINT; }
 
 "="             { return _ATRIBUICAO; }
