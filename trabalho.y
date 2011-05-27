@@ -19,79 +19,139 @@ struct Atributos {
 #define YYSTYPE Atributos
 %}
 
-%token _ID _DO _END
-%token _INTEIRO _DOUBLE _BOOLEAN _STRING
-%token _PRINT _IF _ELSE
-%token _MENORIGUAL _MAIORIGUAL _IGUAL _DIFERENTE _AND _OR
+%token _VALUE_INTEGER _VALUE_DOUBLE _VALUE_CHAR _VALUE_STRING _VALUE_BOOLEAN
+%token _DO _END
+%token _VAR _INTEGER _DOUBLE _CHAR _STRING _BOOLEAN _FUNCTION
+%token _AND _OR _NOT
+%token _IF _ELSE _PRINT
+%token _ATRIBUICAO _MENORIGUAL _MAIORIGUAL _IGUAL _DIFERENTE 
+%token _ID
 
-%left _AND
 %left _OR
+%left _AND
 %nonassoc '<' '>' _MENORIGUAL _MAIORIGUAL _IGUAL _DIFERENTE
 %left '+' '-'
 %left '*' '/' '%'
-%right '^'
 
 %start PROGRAMA
 
 %%
-/*
+/*=========================
 Bloco principal do programa:
-*/
+==========================*/
 PROGRAMA : BLOCO_PRINCIPAL { cout << "\nSintaxe OK!" << endl; }
-         ;
-BLOCO_PRINCIPAL : _DO CMDS _END
+         ; 
+         
+BLOCO_PRINCIPAL : DECLARACOES_GLOBAIS _DO CMDS _END
                 ; 
+                
+DECLARACOES_GLOBAIS : VAR
+                    | FUN
+                    |
+                    ; 
 
 
-/*Comandos de:
-Associação de Identificadores,
-Comandos de Saida
-Comandos de Controle
-*/
+/*================================
+Bloco de declarações de variáveis:
+================================*/                  
+VAR : _VAR DECLARACOES_VARS 
+    ; 
+    
+DECLARACOES_VARS : DECLARACAO_VAR ';' DECLARACOES_VARS
+                 |
+                 ; 
+                 
+DECLARACAO_VAR : LISTA_IDS ':' TIPOS 
+               ; 
+               
+LISTA_IDS : _ID ',' LISTA_IDS
+          | _ID
+          ; 
+
+
+/*==============================
+Bloco de declarações de funções:
+==============================*/
+FUN : _FUNCTION _ID ':' TIPOS ';' CORPO 
+    | _FUNCTION _ID '(' PARAMS ')' ':' TIPOS ';' CORPO
+    ; 
+    
+CORPO : VAR BLOCO ';'
+      |     BLOCO ';'
+      ; 
+      
+PARAMS : DECLARACAO_VAR ',' PARAMS
+       | DECLARACAO_VAR
+       ; 
+
+
+/*============================
+Bloco de Comandos e operações:
+============================*/
 CMDS : CMDS CMD
      |
-     ;
-CMD : CMD_ID
+     ; 
+     
+CMD : CMD_ATRIB 
     | CMD_SAIDA
     | CMD_IF_ELSE
-    ;
-
-
-/*Comandos de Identificadores*/
-CMD_ID : _ID '=' _STRING
-       | _ID '=' _INTEIRO
-       | _ID '=' _DOUBLE
-       | _ID '=' _BOOLEAN
-       ;
+    ; 
+    
+/*Comandos de Atribuição*/
+CMD_ATRIB : _ID _ATRIBUICAO E
+          ; 
+          
 /*Comandos de Saida*/
-CMD_SAIDA : _PRINT '(' _STRING ')'
-          ;
-/*Comandos de Controle*/
-CMD_IF_ELSE : _IF '(' CMD_EVAL ')' _DO CMDS _END
-            | _IF '(' CMD_EVAL ')' _DO CMDS _ELSE CMDS _END
-            ;
-CMD_EVAL : _ID
-         | _BOOLEAN
-         | _ID CMD_CPR _ID
-         | _INTEIRO CMD_CPR _INTEIRO
-         | _DOUBLE CMD_CPR _DOUBLE
-         | _ID CMD_CPR _INTEIRO
-         | _INTEIRO CMD_CPR _ID
-         | _ID CMD_CPR _DOUBLE
-         | _DOUBLE CMD_CPR _ID
-         | _INTEIRO CMD_CPR _DOUBLE
-         | _DOUBLE CMD_CPR _INTEIRO
-         | _ID _IGUAL _STRING
-         | _ID _DIFERENTE _STRING
-         | _STRING _IGUAL _STRING
-         | _STRING _DIFERENTE _STRING
-         ;
-CMD_CPR : '<'
-        | '>' 
-        | _MENORIGUAL
-        | _MAIORIGUAL
-        | _IGUAL 
-        | _DIFERENTE
+CMD_SAIDA : _PRINT '(' _VALUE_STRING ')'
+          ; 
+          
+/*Comando de Controle*/
+CMD_IF_ELSE : _IF '(' E ')' _DO CMDS _END
+            | _IF '(' E ')' _DO CMDS _ELSE CMDS _END
+            ; 
+            
+/*Operações*/
+E : E '+' E
+  | E '-' E
+  | E '*' E
+  | E '/' E
+  | E '%' E
+  | E '<' E
+  | E '>' E
+  | E _MENORIGUAL E
+  | E _MAIORIGUAL E
+  | E _IGUAL E
+  | E _DIFERENTE E
+  | E _AND E
+  | E _OR E
+  | F
+  ; 
+  
+F : _ID
+  | VALUE
+  | '(' E ')'
+  | _NOT F
+  | '-' F
+  | '+' F
+  ; 
+
+
+/*==========================
+Bloco de Tipos e Constantes:
+==========================*/
+VALUE : _VALUE_INTEGER
+      | _VALUE_DOUBLE
+      | _VALUE_CHAR
+      | _VALUE_STRING
+      | _VALUE_BOOLEAN
+      ; 
+      
+TIPOS : _INTEGER
+      | _DOUBLE
+      | _CHAR
+      | _STRING
+      | _BOOLEAN
+      ;
 
 %%
 #include "lex.yy.c"
