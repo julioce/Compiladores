@@ -12,6 +12,7 @@ VALUE_STRING  ({ASPAS})([^'"\n]|[\\][\"]|[\\][\'])*({ASPAS})
 VALUE_BOOLEAN (([Tt][Rr][Uu][Ee])|([Ff][Aa][Ll][Ss][Ee]))
 ID            {LETRA}({LETRA}|{NUMERO})*
 
+BEGIN         [Bb][Ee][Gg][Ii][Nn]
 DO            [Dd][Oo]
 END           [Ee][Nn][Dd]
 
@@ -41,6 +42,7 @@ PRINT         [Pp][Rr][Ii][Nn][Tt]
 {VALUE_STRING}  { return _VALUE_STRING; }
 {VALUE_BOOLEAN} { return _VALUE_BOOLEAN; }
 
+{BEGIN}         { return _BEGIN; }
 {DO}            { return _DO; }
 {END}           { return _END; }
 

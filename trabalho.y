@@ -20,7 +20,7 @@ struct Atributos {
 %}
 
 %token _VALUE_INTEGER _VALUE_DOUBLE _VALUE_CHAR _VALUE_STRING _VALUE_BOOLEAN
-%token _DO _END
+%token _BEGIN _DO _END
 %token _VAR _INTEGER _DOUBLE _CHAR _STRING _BOOLEAN _FUNCTION
 %token _AND _OR _NOT
 %token _IF _ELSE _PRINT
@@ -41,12 +41,10 @@ Bloco principal do programa:
 ==========================*/
 PROGRAMA : BLOCO_PRINCIPAL { cout << "\nSintaxe OK!" << endl; }
          ; 
-         
-BLOCO_PRINCIPAL : DECLARACOES_GLOBAIS _DO CMDS _END
+BLOCO_PRINCIPAL : DECLARACOES_GLOBAIS _BEGIN CMDS _END
                 ; 
-                
-DECLARACOES_GLOBAIS : VAR
-                    | FUN
+DECLARACOES_GLOBAIS : VAR DECLARACOES_GLOBAIS 
+                    | FUN DECLARACOES_GLOBAIS
                     |
                     ; 
 
@@ -56,14 +54,11 @@ Bloco de declarações de variáveis:
 ================================*/                  
 VAR : _VAR DECLARACOES_VARS 
     ; 
-    
-DECLARACOES_VARS : DECLARACAO_VAR ';' DECLARACOES_VARS
+DECLARACOES_VARS : DECLARACAO_VAR DECLARACOES_VARS
                  |
                  ; 
-                 
 DECLARACAO_VAR : LISTA_IDS ':' TIPOS 
                ; 
-               
 LISTA_IDS : _ID ',' LISTA_IDS
           | _ID
           ; 
@@ -72,14 +67,12 @@ LISTA_IDS : _ID ',' LISTA_IDS
 /*==============================
 Bloco de declarações de funções:
 ==============================*/
-FUN : _FUNCTION _ID ':' TIPOS ';' CORPO 
-    | _FUNCTION _ID '(' PARAMS ')' ':' TIPOS ';' CORPO
+FUN : _FUNCTION _ID ':' TIPOS CORPO 
+    | _FUNCTION _ID '(' PARAMS ')' ':' TIPOS CORPO
     ; 
-    
-CORPO : VAR BLOCO ';'
-      |     BLOCO ';'
+CORPO : VAR CMDS _END
+      | CMDS _END
       ; 
-      
 PARAMS : DECLARACAO_VAR ',' PARAMS
        | DECLARACAO_VAR
        ; 
@@ -91,7 +84,6 @@ Bloco de Comandos e operações:
 CMDS : CMDS CMD
      |
      ; 
-     
 CMD : CMD_ATRIB 
     | CMD_SAIDA
     | CMD_IF_ELSE
@@ -100,16 +92,13 @@ CMD : CMD_ATRIB
 /*Comandos de Atribuição*/
 CMD_ATRIB : _ID _ATRIBUICAO E
           ; 
-          
 /*Comandos de Saida*/
-CMD_SAIDA : _PRINT '(' _VALUE_STRING ')'
+CMD_SAIDA : _PRINT '(' E ')'
           ; 
-          
 /*Comando de Controle*/
-CMD_IF_ELSE : _IF '(' E ')' _DO CMDS _END
-            | _IF '(' E ')' _DO CMDS _ELSE CMDS _END
+CMD_IF_ELSE : _IF '(' E ')' CMDS _END
+            | _IF '(' E ')' CMDS _ELSE CMDS _END
             ; 
-            
 /*Operações*/
 E : E '+' E
   | E '-' E
@@ -125,8 +114,7 @@ E : E '+' E
   | E _AND E
   | E _OR E
   | F
-  ; 
-  
+  ;
 F : _ID
   | VALUE
   | '(' E ')'
@@ -159,7 +147,7 @@ TIPOS : _INTEGER
 void yyerror( const char* st )
 {
   cout << "Erro sintatico: " << st << endl
-       << "Proximo a: " << yytext << endl;
+       << "Erro anterior ao token: " << yytext << endl;
 }
 
 string toStr( int n ) {

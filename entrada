@@ -1,5 +1,24 @@
-do
+var
+  str1, str2 : string
+  double1, double2 : double
 
-  print( "ola" )
+function maxInt(int1 : integer, int2 : integer) : integer
+end
+
+function maxDouble(double1 : double, double2 : double) : double
+  if(double1 > double2)
+    print(double1)
+  else
+    print(double2)
+  end
+end
+
+function str : string
+end
+
+begin
+
+  print(str1)
+  print(str2)
 
 end
