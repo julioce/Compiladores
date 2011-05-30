@@ -23,7 +23,7 @@ struct Atributos {
 %token _BEGIN _DO _END
 %token _VAR _INTEGER _DOUBLE _CHAR _STRING _BOOLEAN _FUNCTION
 %token _AND _OR _NOT
-%token _IF _ELSE _FOR _WHILE _PRINT
+%token _IF _ELSE _FOR _WHILE _PRINT _READ
 %token _ATRIBUICAO _MENORIGUAL _MAIORIGUAL _IGUAL _DIFERENTE 
 %token _ID
 
@@ -43,7 +43,7 @@ PROGRAMA : BLOCO_PRINCIPAL { cout << "\nSintaxe OK!" << endl; }
          ; 
 BLOCO_PRINCIPAL : DECLARACOES_GLOBAIS _BEGIN CMDS _END
                 ; 
-DECLARACOES_GLOBAIS : VAR DECLARACOES_GLOBAIS 
+DECLARACOES_GLOBAIS : VAR DECLARACOES_GLOBAIS
                     | FUN DECLARACOES_GLOBAIS
                     |
                     ; 
@@ -84,18 +84,23 @@ Bloco de Comandos e operações:
 CMDS : CMDS CMD
      |
      ; 
-CMD : CMD_ATRIB 
+CMD : _DO CMDS _END
+    | CMD_ATRIB 
     | CMD_SAIDA
+    | CMD_ENTRADA
     | CMD_IF_ELSE
     | CMD_FOR
     | CMD_WHILE
+    | CMD_DO_WHILE
     ; 
     
 /*Comandos de Atribuição*/
 CMD_ATRIB : _ID _ATRIBUICAO E
           ; 
-/*Comandos de Saida*/
+/*Comandos de Entrada e Saida*/
 CMD_SAIDA : _PRINT '(' E ')'
+          ; 
+CMD_ENTRADA : _READ '(' E ')'
           ; 
 /*Comando de Controle*/
 CMD_IF_ELSE : _IF '(' E ')' CMDS _END
@@ -106,6 +111,9 @@ CMD_FOR : _FOR '(' CMD_ATRIB ';' E ';' E ')' CMDS _END
         ;
 CMD_WHILE : _WHILE '(' E ')' CMDS _END
           | _WHILE '(' _VALUE_BOOLEAN ')' CMDS _END
+          ; 
+CMD_DO_WHILE : _DO CMDS _WHILE '(' E ')' _END
+          | _DO CMDS _WHILE '(' _VALUE_BOOLEAN ')' _END
           ; 
 /*Operações*/
 E : E '+' E
@@ -136,7 +144,7 @@ F : _ID
 /*==========================
 Bloco de Tipos e Constantes:
 ==========================*/
-VALUE : _VALUE_INTEGER
+VALUE : _VALUE_INTEGER 
       | _VALUE_DOUBLE
       | _VALUE_CHAR
       | _VALUE_STRING

@@ -6,9 +6,9 @@ ASPAS         "\""
 PLICS         "\'"
 
 VALUE_INTEGER {NUMERO}+
-VALUE_DOUBLE  {NUMERO}+("."{NUMERO}*)?
-VALUE_CHAR    ({PLICS}){LETRA}({PLICS})
-VALUE_STRING  ({ASPAS})([^'"\n]|[\\][\"]|[\\][\'])*({ASPAS})
+VALUE_DOUBLE  {NUMERO}+("."{NUMERO}+)?
+VALUE_CHAR    {PLICS}.{PLICS}
+VALUE_STRING  ({ASPAS}|{PLICS})([^'"\n]|[\\][\"]|[\\][\'])*({ASPAS}|{PLICS})
 VALUE_BOOLEAN (([Tt][Rr][Uu][Ee])|([Ff][Aa][Ll][Ss][Ee]))
 ID            {LETRA}({LETRA}|{NUMERO})*
 
@@ -33,6 +33,7 @@ ELSE          [Ee][Ll][Ss][Ee]
 FOR           [Ff][Oo][Rr]
 WHILE         [Ww][Hh][Ii][Ll][Ee]
 PRINT         [Pp][Rr][Ii][Nn][Tt]
+READ          [Rr][Ee][Aa][Dd]
  
 %%
 
@@ -65,6 +66,7 @@ PRINT         [Pp][Rr][Ii][Nn][Tt]
 {FOR}           { return _FOR; }
 {WHILE}         { return _WHILE; } 
 {PRINT}         { return _PRINT; }
+{READ}          { return _READ; }
 
 "="             { return _ATRIBUICAO; }
 "<="            { return _MENORIGUAL; }
