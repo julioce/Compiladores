@@ -52,12 +52,12 @@ DECLARACOES_GLOBAIS : VAR DECLARACOES_GLOBAIS
 /*================================
 Bloco de declarações de variáveis:
 ================================*/                  
-VAR : _VAR DECLARACOES_VARS 
+VAR : _VAR DECLARACOES_VARS _END
     ; 
 DECLARACOES_VARS : DECLARACAO_VAR DECLARACOES_VARS
                  |
                  ; 
-DECLARACAO_VAR : LISTA_IDS ':' TIPOS 
+DECLARACAO_VAR : LISTA_IDS ':' TIPOS
                ; 
 LISTA_IDS : _ID ',' LISTA_IDS
           | _ID
@@ -103,17 +103,15 @@ CMD_SAIDA : _PRINT '(' E ')'
 CMD_ENTRADA : _READ '(' E ')'
           ; 
 /*Comando de Controle*/
-CMD_IF_ELSE : _IF '(' E ')' CMDS _END
-            | _IF '(' E ')' CMDS _ELSE CMDS _END
+CMD_IF_ELSE : _IF '(' E ')' _DO CMDS _END
+            | _IF '(' E ')' _DO CMDS _ELSE CMDS _END
             ;
 /*Comando de Iteração*/
-CMD_FOR : _FOR '(' CMD_ATRIB ';' E ';' E ')' CMDS _END
+CMD_FOR : _FOR '(' CMD_ATRIB ';' E ';' E ')' _DO CMDS _END
         ;
-CMD_WHILE : _WHILE '(' E ')' CMDS _END
-          | _WHILE '(' _VALUE_BOOLEAN ')' CMDS _END
+CMD_WHILE : _WHILE '(' E ')' _DO CMDS _END
           ; 
 CMD_DO_WHILE : _DO CMDS _WHILE '(' E ')' _END
-          | _DO CMDS _WHILE '(' _VALUE_BOOLEAN ')' _END
           ; 
 /*Operações*/
 E : E '+' E

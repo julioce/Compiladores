@@ -1,7 +1,7 @@
 var
 	str1, str2 : string
 	double1, double2 : double
-
+end
 
 
 function str : string
@@ -15,7 +15,7 @@ end
 
 
 function maxDouble(double1 : double, double2 : double) : double
-	if(double1 > double2)
+	if(double1 > double2) do
 		print(double1)
 	else
 		print(double2)
@@ -33,7 +33,7 @@ begin
 
 
 
-	if(true)
+	if(true) do
 		print(str1)
 	else
 		do
@@ -43,7 +43,7 @@ begin
 
 
 
-	for(i=0; i<10; i+1)
+	for(i=0; i<10; i+1) do
 		do
 			print(str2)
 		end
@@ -51,7 +51,7 @@ begin
 
 
 
-	while( var_qualquer )
+	while( var_qualquer ) do
     	do
 			print(str2)
 		end
