@@ -22,7 +22,9 @@ DOUBLE        [Dd][Oo][Uu][Bb][Ll][Ee]
 CHAR          [Cc][Hh][Aa][Rr]  
 STRING        [Ss][Tt][Rr][Ii][Nn][Gg]
 BOOLEAN       [Bb][Oo][Oo][Ll][Ee][Aa][Nn]
-FUNCTION      [Ff][Uu][Nn][Cc][Tt][Ii][Oo][Nn] 
+FUNCTION      [Ff][Uu][Nn][Cc][Tt][Ii][Oo][Nn]
+ARRAY         [Aa][Rr][Rr][Aa][Yy]
+OF            [Oo][Ff]
 
 AND           [Aa][Nn][Dd]
 OR            [Oo][Rr]
@@ -56,6 +58,8 @@ READ          [Rr][Ee][Aa][Dd]
 {STRING}        { return _STRING; }
 {BOOLEAN}       { return _BOOLEAN; }
 {FUNCTION}      { return _FUNCTION; }
+{ARRAY}         { return _ARRAY; }
+{OF}            { return _OF; }
 
 {AND}           { return _AND; }
 {OR}            { return _OR; }
