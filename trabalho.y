@@ -1,4 +1,10 @@
 %{
+/*Grupo
+  Júlio César Machado Bueno - 106033507
+  Jonas Tomaz Alves - 106089655
+  Débora Ribeiro Nobre - 107390677
+*/
+
 #include <string>
 #include <iostream>
 #include <sstream>
