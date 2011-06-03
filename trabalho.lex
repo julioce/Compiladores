@@ -1,3 +1,9 @@
+/*Grupo
+  Júlio César Machado Bueno - 106033507
+  Jonas Tomaz Alves - 106089655
+  Débora Ribeiro Nobre - 107390677
+*/
+
 DELIM         [\t\n ]
 NUMERO        [0-9]
 LETRA         [A-Za-z_]
