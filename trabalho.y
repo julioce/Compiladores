@@ -19,7 +19,6 @@ int toInt( string n );
 string criaTemp();
 string geraCodigoDeclaracaoVarTemp();
 
-
 struct Atributos {
   string v, c;
 
@@ -52,29 +51,42 @@ void geraCodigoOperador(Atributos& ss, Atributos s1, string op, Atributos s3);
 /*=========================
 Bloco principal do programa:
 ==========================*/
-PROGRAMA : BLOCO_PRINCIPAL { $$.c = "#include <iostream>\n\nusing namespace std;\n\n";}{ cout << "\nSintaxe OK!" << endl; }
+PROGRAMA : BLOCO_PRINCIPAL { cout << "\nSintaxe OK!\n\n"
+                                     "========Arquivo Gerado========\n"
+                                     "#include <iostream>\n\n"
+                                     "using namespace std;\n\n" << $1.c << "\n\n" << endl; }
          ; 
-BLOCO_PRINCIPAL : DECLARACOES_GLOBAIS _BEGIN CMDS _END
-                { $$.c = $1.c + geraCodigoDeclaracaoVarTemp() + $2.c + $3.c; }
+BLOCO_PRINCIPAL : DECLARACOES_GLOBAIS _BEGIN { $$.c = "\nint main() {\n\treturn 0;\n}\n"; }
+                  CMDS _END
+                  { $$.c = $1.c + geraCodigoDeclaracaoVarTemp() + $2.c + $3.c;}
                 ; 
-DECLARACOES_GLOBAIS : VAR DECLARACOES_GLOBAIS
-                    | FUN DECLARACOES_GLOBAIS
-                    |
+DECLARACOES_GLOBAIS : VAR DECLARACOES_GLOBAIS { $$.c = $1.c + $2.c; }
+                    | FUN DECLARACOES_GLOBAIS { $$.c = $1.c + $2.c; }
+                    | { $$.v = ""; $$.c = ""; }
                     ; 
 
 
 /*================================
 Bloco de declarações de variáveis:
 ================================*/                  
-VAR : _VAR DECLARACOES_VARS _END
+VAR : _VAR DECLARACOES_VARS _END { $$ = $2; }
     ; 
-DECLARACOES_VARS : DECLARACAO_VAR DECLARACOES_VARS
-                 |
+DECLARACOES_VARS : DECLARACAO_VAR DECLARACOES_VARS { $$.c = $1.c + $2.c; }
+                 | { $$.v = ""; $$.c = ""; }
                  ; 
 DECLARACAO_VAR : LISTA_IDS ':' TIPOS
+                 { 
+                 string lista = $$.v;
+                 $$.c = "";
+    
+                 for( size_t pos = lista.find( "$" ); pos != string::npos; pos = lista.find( "$" ) ) { 
+                   $$.c += $3.v + " " + lista.substr( 0, pos ) + ";\n"; 
+                   lista = lista.substr( pos+1 );
+                 }
+               }
                ; 
-LISTA_IDS : _ID ',' LISTA_IDS
-          | _ID
+LISTA_IDS : _ID ',' LISTA_IDS { $$.v = $1.v + "$" + $3.v; }
+          | _ID { $$.v = $1.v + "$"; }
           ; 
 
 
