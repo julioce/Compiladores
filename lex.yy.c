@@ -525,7 +525,12 @@ int yy_flex_debug = 0;
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
 #line 1 "trabalho.lex"
-#line 529 "lex.yy.c"
+/*Grupo
+  Júlio César Machado Bueno - 106033507
+  Jonas Tomaz Alves - 106089655
+  Débora Ribeiro Nobre - 107390677
+*/
+#line 534 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -707,10 +712,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 40 "trabalho.lex"
+#line 46 "trabalho.lex"
 
 
-#line 714 "lex.yy.c"
+#line 719 "lex.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -796,180 +801,180 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 42 "trabalho.lex"
+#line 48 "trabalho.lex"
 {}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 44 "trabalho.lex"
-{ return _VALUE_INTEGER; }
+#line 50 "trabalho.lex"
+{ yylval = Atributos( yytext, "" ); return _VALUE_INTEGER; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 45 "trabalho.lex"
-{ return _VALUE_DOUBLE; }
+#line 51 "trabalho.lex"
+{ yylval = Atributos( yytext, "" ); return _VALUE_DOUBLE; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 46 "trabalho.lex"
-{ return _VALUE_CHAR; }
+#line 52 "trabalho.lex"
+{ yylval = Atributos( yytext, "" ); return _VALUE_CHAR; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 47 "trabalho.lex"
-{ return _VALUE_STRING; }
+#line 53 "trabalho.lex"
+{ yylval = Atributos( yytext, "" ); return _VALUE_STRING; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 48 "trabalho.lex"
-{ return _VALUE_BOOLEAN; }
+#line 54 "trabalho.lex"
+{ yylval = Atributos( yytext, "" ); return _VALUE_BOOLEAN; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 50 "trabalho.lex"
+#line 56 "trabalho.lex"
 { return _BEGIN; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 51 "trabalho.lex"
+#line 57 "trabalho.lex"
 { return _DO; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 52 "trabalho.lex"
+#line 58 "trabalho.lex"
 { return _END; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 54 "trabalho.lex"
+#line 60 "trabalho.lex"
 { return _VAR; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 55 "trabalho.lex"
-{ return _INTEGER; }
+#line 61 "trabalho.lex"
+{ yylval = Atributos( "int", "" ); return _INTEGER; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 56 "trabalho.lex"
-{ return _DOUBLE; }
+#line 62 "trabalho.lex"
+{ yylval = Atributos( "double", "" ); return _DOUBLE; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 57 "trabalho.lex"
-{ return _CHAR; }
+#line 63 "trabalho.lex"
+{ yylval = Atributos( "char", "" ); return _CHAR; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 58 "trabalho.lex"
-{ return _STRING; }
+#line 64 "trabalho.lex"
+{ yylval = Atributos( "char[256]", "" ); return _STRING; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 59 "trabalho.lex"
-{ return _BOOLEAN; }
+#line 65 "trabalho.lex"
+{ yylval = Atributos( "int", "" ); return _BOOLEAN; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 60 "trabalho.lex"
+#line 66 "trabalho.lex"
 { return _FUNCTION; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 61 "trabalho.lex"
+#line 67 "trabalho.lex"
 { return _ARRAY; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 62 "trabalho.lex"
+#line 68 "trabalho.lex"
 { return _OF; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 64 "trabalho.lex"
+#line 70 "trabalho.lex"
 { return _AND; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 65 "trabalho.lex"
+#line 71 "trabalho.lex"
 { return _OR; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 66 "trabalho.lex"
+#line 72 "trabalho.lex"
 { return _NOT; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 68 "trabalho.lex"
+#line 74 "trabalho.lex"
 { return _IF; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 69 "trabalho.lex"
+#line 75 "trabalho.lex"
 { return _ELSE; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 70 "trabalho.lex"
+#line 76 "trabalho.lex"
 { return _FOR; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 71 "trabalho.lex"
+#line 77 "trabalho.lex"
 { return _WHILE; } 
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 72 "trabalho.lex"
+#line 78 "trabalho.lex"
 { return _PRINT; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 73 "trabalho.lex"
+#line 79 "trabalho.lex"
 { return _READ; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 75 "trabalho.lex"
+#line 81 "trabalho.lex"
 { return _ATRIBUICAO; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 76 "trabalho.lex"
+#line 82 "trabalho.lex"
 { return _MENORIGUAL; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 77 "trabalho.lex"
+#line 83 "trabalho.lex"
 { return _MAIORIGUAL; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 78 "trabalho.lex"
+#line 84 "trabalho.lex"
 { return _IGUAL; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 79 "trabalho.lex"
+#line 85 "trabalho.lex"
 { return _DIFERENTE; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 81 "trabalho.lex"
-{ return _ID; }
+#line 87 "trabalho.lex"
+{ yylval = Atributos( string("_") + yytext, "" ); return _ID; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 83 "trabalho.lex"
+#line 89 "trabalho.lex"
 { return *yytext; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 85 "trabalho.lex"
+#line 91 "trabalho.lex"
 ECHO;
 	YY_BREAK
-#line 973 "lex.yy.c"
+#line 978 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1977,7 +1982,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 85 "trabalho.lex"
+#line 91 "trabalho.lex"
 
 
 

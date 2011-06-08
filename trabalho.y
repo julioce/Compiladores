@@ -16,11 +16,18 @@ int yylex();
 void yyerror( const char* st );
 string toStr( int n );
 int toInt( string n );
+string criaTemp();
+string geraCodigoDeclaracaoVarTemp();
 
 
 struct Atributos {
-  string e, d;
+  string v, c;
+
+  Atributos(): v(""), c("") {}
+  Atributos(string v, string c): v(v), c(c) {} 
 };
+
+void geraCodigoOperador(Atributos& ss, Atributos s1, string op, Atributos s3);
 
 #define YYSTYPE Atributos
 %}
@@ -45,9 +52,10 @@ struct Atributos {
 /*=========================
 Bloco principal do programa:
 ==========================*/
-PROGRAMA : BLOCO_PRINCIPAL { cout << "\nSintaxe OK!" << endl; }
+PROGRAMA : BLOCO_PRINCIPAL { $$.c = "#include <iostream>\n\nusing namespace std;\n\n";}{ cout << "\nSintaxe OK!" << endl; }
          ; 
 BLOCO_PRINCIPAL : DECLARACOES_GLOBAIS _BEGIN CMDS _END
+                { $$.c = $1.c + geraCodigoDeclaracaoVarTemp() + $2.c + $3.c; }
                 ; 
 DECLARACOES_GLOBAIS : VAR DECLARACOES_GLOBAIS
                     | FUN DECLARACOES_GLOBAIS
@@ -208,8 +216,9 @@ ARRAY_BOOLEAN : '[' _VALUE_BOOLEAN ':' _VALUE_BOOLEAN ']';
 %%
 #include "lex.yy.c"
 
-void yyerror( const char* st )
-{
+int n_temp = 0;
+
+void yyerror( const char* st ){
   cout << "Erro sintatico: " << st << endl
        << "Erro anterior ao token: " << yytext << endl;
 }
@@ -230,6 +239,25 @@ int toInt( string n ) {
   temp >> valor;
 
   return valor;
+}
+
+string criaTemp() {
+  return "t" + toStr( ++n_temp );
+}
+
+string geraCodigoDeclaracaoVarTemp() {
+  string aux = "";
+  
+  for( int i = 1; i <= n_temp; i++ )
+    aux += "int t" + toStr( i ) + ";\n";
+
+  return aux;
+}
+
+void geraCodigoOperador(Atributos& ss, Atributos s1, string op, Atributos s3) {
+  ss.v = criaTemp();
+  ss.c = s1.c + s3.c + 
+  ss.v + " = " + s1.v + " " + op + " " + s3.v + ";\n";  
 }
 
 int main( int argc, char* argv[] )
