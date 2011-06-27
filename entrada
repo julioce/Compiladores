@@ -1,7 +1,6 @@
 var
 	str1, str2 : string
-	double1, double2 : double
-	array1 : array['a':'b'][12:90] of char
+	db1, db2 : double
 end
 
 function str : string

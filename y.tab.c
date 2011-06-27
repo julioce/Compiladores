@@ -78,22 +78,24 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <map>
 
 using namespace std;
 
 int yyparse();
 int yylex();
 void yyerror( const char* st );
+void erroSemantico ( string erro );
 string toStr( int n );
 int toInt( string n );
 string criaTemp();
 string geraCodigoDeclaracaoVarTemp();
 
 struct Atributos {
-  string v, c;
+  string v, c, t;
 
-  Atributos(): v(""), c("") {}
-  Atributos(string v, string c): v(v), c(c) {} 
+  Atributos(): v(""), c(""), t("") {}
+  Atributos(string v, string c, string t): v(v), c(c), t(t) {} 
 };
 
 void geraCodigoOperador(Atributos& ss, Atributos s1, string op, Atributos s3);
@@ -102,7 +104,7 @@ void geraCodigoOperador(Atributos& ss, Atributos s1, string op, Atributos s3);
 
 
 /* Line 189 of yacc.c  */
-#line 106 "y.tab.c"
+#line 108 "y.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -212,7 +214,7 @@ typedef int YYSTYPE;
 
 
 /* Line 264 of yacc.c  */
-#line 216 "y.tab.c"
+#line 218 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -542,16 +544,16 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    54,    54,    59,    59,    63,    64,    65,    72,    74,
-      75,    77,    88,    89,    96,    97,    98,   100,   101,   103,
-     104,   106,   107,   114,   115,   117,   118,   119,   120,   121,
-     122,   123,   124,   125,   131,   132,   133,   139,   140,   145,
-     146,   152,   153,   154,   159,   160,   166,   167,   168,   169,
-     170,   171,   172,   173,   174,   175,   176,   177,   178,   179,
-     180,   182,   183,   184,   185,   186,   187,   194,   195,   196,
-     197,   198,   200,   201,   202,   203,   204,   205,   206,   207,
-     208,   209,   210,   211,   212,   213,   214,   216,   217,   218,
-     219,   220,   222,   223,   224,   225,   226
+       0,    56,    56,    61,    61,    65,    66,    67,    74,    76,
+      77,    79,    96,    97,   104,   105,   106,   108,   109,   111,
+     112,   114,   115,   122,   123,   125,   126,   127,   128,   129,
+     130,   131,   132,   133,   139,   140,   141,   147,   148,   153,
+     154,   160,   161,   162,   167,   168,   174,   175,   176,   177,
+     178,   179,   180,   181,   182,   183,   184,   185,   186,   187,
+     188,   190,   191,   192,   193,   194,   195,   202,   203,   204,
+     205,   206,   208,   209,   210,   211,   212,   213,   214,   215,
+     216,   217,   218,   219,   220,   221,   222,   224,   225,   226,
+     227,   228,   230,   231,   232,   233,   234
 };
 #endif
 
@@ -1654,7 +1656,7 @@ yyreduce:
         case 2:
 
 /* Line 1464 of yacc.c  */
-#line 54 "trabalho.y"
+#line 56 "trabalho.y"
     { cout << "\nSintaxe OK!\n\n"
                                      "========Arquivo Gerado========\n"
                                      "#include <iostream>\n\n"
@@ -1664,69 +1666,75 @@ yyreduce:
   case 3:
 
 /* Line 1464 of yacc.c  */
-#line 59 "trabalho.y"
+#line 61 "trabalho.y"
     { (yyval).c = "\nint main() {\n\treturn 0;\n}\n"; }
     break;
 
   case 4:
 
 /* Line 1464 of yacc.c  */
-#line 61 "trabalho.y"
+#line 63 "trabalho.y"
     { (yyval).c = (yyvsp[(1) - (5)]).c + geraCodigoDeclaracaoVarTemp() + (yyvsp[(2) - (5)]).c + (yyvsp[(3) - (5)]).c;}
     break;
 
   case 5:
 
 /* Line 1464 of yacc.c  */
-#line 63 "trabalho.y"
+#line 65 "trabalho.y"
     { (yyval).c = (yyvsp[(1) - (2)]).c + (yyvsp[(2) - (2)]).c; }
     break;
 
   case 6:
 
 /* Line 1464 of yacc.c  */
-#line 64 "trabalho.y"
+#line 66 "trabalho.y"
     { (yyval).c = (yyvsp[(1) - (2)]).c + (yyvsp[(2) - (2)]).c; }
     break;
 
   case 7:
 
 /* Line 1464 of yacc.c  */
-#line 65 "trabalho.y"
+#line 67 "trabalho.y"
     { (yyval).v = ""; (yyval).c = ""; }
     break;
 
   case 8:
 
 /* Line 1464 of yacc.c  */
-#line 72 "trabalho.y"
+#line 74 "trabalho.y"
     { (yyval) = (yyvsp[(2) - (3)]); }
     break;
 
   case 9:
 
 /* Line 1464 of yacc.c  */
-#line 74 "trabalho.y"
+#line 76 "trabalho.y"
     { (yyval).c = (yyvsp[(1) - (2)]).c + (yyvsp[(2) - (2)]).c; }
     break;
 
   case 10:
 
 /* Line 1464 of yacc.c  */
-#line 75 "trabalho.y"
+#line 77 "trabalho.y"
     { (yyval).v = ""; (yyval).c = ""; }
     break;
 
   case 11:
 
 /* Line 1464 of yacc.c  */
-#line 78 "trabalho.y"
+#line 80 "trabalho.y"
     { 
-                 string lista = (yyval).v;
+                 string lista = (yyvsp[(1) - (3)]).v;
+                 string tipo = (yyvsp[(3) - (3)]).t;
                  (yyval).c = "";
     
                  for( size_t pos = lista.find( "$" ); pos != string::npos; pos = lista.find( "$" ) ) { 
-                   (yyval).c += (yyvsp[(3) - (3)]).v + " " + lista.substr( 0, pos ) + ";\n"; 
+                   string variavel = lista.substr( 0, pos );
+                   if(tipo == "string"){
+                     (yyval).c += variavel + " " + tipo + ";\n"; 
+                   }else{
+                     (yyval).c += tipo + " " + variavel + ";\n"; 
+                   }
                    lista = lista.substr( pos+1 );
                  }
                }
@@ -1735,21 +1743,21 @@ yyreduce:
   case 12:
 
 /* Line 1464 of yacc.c  */
-#line 88 "trabalho.y"
+#line 96 "trabalho.y"
     { (yyval).v = (yyvsp[(1) - (3)]).v + "$" + (yyvsp[(3) - (3)]).v; }
     break;
 
   case 13:
 
 /* Line 1464 of yacc.c  */
-#line 89 "trabalho.y"
+#line 97 "trabalho.y"
     { (yyval).v = (yyvsp[(1) - (1)]).v + "$"; }
     break;
 
 
 
 /* Line 1464 of yacc.c  */
-#line 1753 "y.tab.c"
+#line 1761 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1961,7 +1969,7 @@ yyreturn:
 
 
 /* Line 1684 of yacc.c  */
-#line 228 "trabalho.y"
+#line 236 "trabalho.y"
 
 #include "lex.yy.c"
 
@@ -1970,6 +1978,11 @@ int n_temp = 0;
 void yyerror( const char* st ){
   cout << "Erro sintatico: " << st << endl
        << "Erro anterior ao token: " << yytext << endl;
+}
+
+void erroSemantico ( string erro ){
+  cout << "Erro semântico em : - " << erro << endl;
+  exit(0);
 }
 
 string toStr( int n ) {

@@ -47,22 +47,22 @@ READ          [Rr][Ee][Aa][Dd]
 
 {DELIM}   {}
 
-{VALUE_INTEGER} { yylval = Atributos( yytext, "" ); return _VALUE_INTEGER; }
-{VALUE_DOUBLE}  { yylval = Atributos( yytext, "" ); return _VALUE_DOUBLE; }
-{VALUE_CHAR}    { yylval = Atributos( yytext, "" ); return _VALUE_CHAR; }
-{VALUE_STRING}  { yylval = Atributos( yytext, "" ); return _VALUE_STRING; }
-{VALUE_BOOLEAN} { yylval = Atributos( yytext, "" ); return _VALUE_BOOLEAN; }
+{VALUE_INTEGER} { yylval = Atributos( yytext, "", "" ); return _VALUE_INTEGER; }
+{VALUE_DOUBLE}  { yylval = Atributos( yytext, "", "" ); return _VALUE_DOUBLE; }
+{VALUE_CHAR}    { yylval = Atributos( yytext, "", "" ); return _VALUE_CHAR; }
+{VALUE_STRING}  { yylval = Atributos( yytext, "", "" ); return _VALUE_STRING; }
+{VALUE_BOOLEAN} { yylval = Atributos( yytext, "", "" ); return _VALUE_BOOLEAN; }
 
 {BEGIN}         { return _BEGIN; }
 {DO}            { return _DO; }
 {END}           { return _END; }
 
 {VAR}           { return _VAR; }
-{INTEGER}       { yylval = Atributos( "int", "" ); return _INTEGER; }
-{DOUBLE}        { yylval = Atributos( "double", "" ); return _DOUBLE; }
-{CHAR}          { yylval = Atributos( "char", "" ); return _CHAR; }
-{STRING}        { yylval = Atributos( "char[256]", "" ); return _STRING; }
-{BOOLEAN}       { yylval = Atributos( "int", "" ); return _BOOLEAN; }
+{INTEGER}       { yylval = Atributos( "int", "", "int" ); return _INTEGER; }
+{DOUBLE}        { yylval = Atributos( "double", "", "double" ); return _DOUBLE; }
+{CHAR}          { yylval = Atributos( "char", "", "char" ); return _CHAR; }
+{STRING}        { yylval = Atributos( "char[256]", "", "string" ); return _STRING; }
+{BOOLEAN}       { yylval = Atributos( "int", "", "int" ); return _BOOLEAN; }
 {FUNCTION}      { return _FUNCTION; }
 {ARRAY}         { return _ARRAY; }
 {OF}            { return _OF; }
@@ -84,7 +84,7 @@ READ          [Rr][Ee][Aa][Dd]
 "=="            { return _IGUAL; }
 "!="            { return _DIFERENTE; }
 
-{ID}            { yylval = Atributos( string("_") + yytext, "" ); return _ID; }
+{ID}            { yylval = Atributos( string("_") + yytext, "", "" ); return _ID; }
 
 .               { return *yytext; }
 

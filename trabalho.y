@@ -8,22 +8,24 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <map>
 
 using namespace std;
 
 int yyparse();
 int yylex();
 void yyerror( const char* st );
+void erroSemantico ( string erro );
 string toStr( int n );
 int toInt( string n );
 string criaTemp();
 string geraCodigoDeclaracaoVarTemp();
 
 struct Atributos {
-  string v, c;
+  string v, c, t;
 
-  Atributos(): v(""), c("") {}
-  Atributos(string v, string c): v(v), c(c) {} 
+  Atributos(): v(""), c(""), t("") {}
+  Atributos(string v, string c, string t): v(v), c(c), t(t) {} 
 };
 
 void geraCodigoOperador(Atributos& ss, Atributos s1, string op, Atributos s3);
@@ -51,9 +53,7 @@ void geraCodigoOperador(Atributos& ss, Atributos s1, string op, Atributos s3);
 /*=========================
 Bloco principal do programa:
 ==========================*/
-PROGRAMA : BLOCO_PRINCIPAL { cout << "\nSintaxe OK!\n\n"
-                                     "========Arquivo Gerado========\n"
-                                     "#include <iostream>\n\n"
+PROGRAMA : BLOCO_PRINCIPAL { cout << "#include <iostream>\n\n"
                                      "using namespace std;\n\n" << $1.c << "\n\n" << endl; }
          ; 
 BLOCO_PRINCIPAL : DECLARACOES_GLOBAIS _BEGIN { $$.c = "\nint main() {\n\treturn 0;\n}\n"; }
@@ -76,11 +76,17 @@ DECLARACOES_VARS : DECLARACAO_VAR DECLARACOES_VARS { $$.c = $1.c + $2.c; }
                  ; 
 DECLARACAO_VAR : LISTA_IDS ':' TIPOS
                  { 
-                 string lista = $$.v;
+                 string lista = $1.v;
+                 string tipo = $3.t;
                  $$.c = "";
     
                  for( size_t pos = lista.find( "$" ); pos != string::npos; pos = lista.find( "$" ) ) { 
-                   $$.c += $3.v + " " + lista.substr( 0, pos ) + ";\n"; 
+                   string variavel = lista.substr( 0, pos );
+                   if(tipo == "string"){
+                     $$.c += variavel + " " + tipo + ";\n"; 
+                   }else{
+                     $$.c += tipo + " " + variavel + ";\n"; 
+                   }
                    lista = lista.substr( pos+1 );
                  }
                }
@@ -233,6 +239,11 @@ int n_temp = 0;
 void yyerror( const char* st ){
   cout << "Erro sintatico: " << st << endl
        << "Erro anterior ao token: " << yytext << endl;
+}
+
+void erroSemantico ( string erro ){
+  cout << "Erro semântico em : - " << erro << endl;
+  exit(0);
 }
 
 string toStr( int n ) {

@@ -807,27 +807,27 @@ YY_RULE_SETUP
 case 2:
 YY_RULE_SETUP
 #line 50 "trabalho.lex"
-{ yylval = Atributos( yytext, "" ); return _VALUE_INTEGER; }
+{ yylval = Atributos( yytext, "", "" ); return _VALUE_INTEGER; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
 #line 51 "trabalho.lex"
-{ yylval = Atributos( yytext, "" ); return _VALUE_DOUBLE; }
+{ yylval = Atributos( yytext, "", "" ); return _VALUE_DOUBLE; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
 #line 52 "trabalho.lex"
-{ yylval = Atributos( yytext, "" ); return _VALUE_CHAR; }
+{ yylval = Atributos( yytext, "", "" ); return _VALUE_CHAR; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 53 "trabalho.lex"
-{ yylval = Atributos( yytext, "" ); return _VALUE_STRING; }
+{ yylval = Atributos( yytext, "", "" ); return _VALUE_STRING; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
 #line 54 "trabalho.lex"
-{ yylval = Atributos( yytext, "" ); return _VALUE_BOOLEAN; }
+{ yylval = Atributos( yytext, "", "" ); return _VALUE_BOOLEAN; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
@@ -852,27 +852,27 @@ YY_RULE_SETUP
 case 11:
 YY_RULE_SETUP
 #line 61 "trabalho.lex"
-{ yylval = Atributos( "int", "" ); return _INTEGER; }
+{ yylval = Atributos( "int", "", "int" ); return _INTEGER; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 62 "trabalho.lex"
-{ yylval = Atributos( "double", "" ); return _DOUBLE; }
+{ yylval = Atributos( "double", "", "double" ); return _DOUBLE; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 63 "trabalho.lex"
-{ yylval = Atributos( "char", "" ); return _CHAR; }
+{ yylval = Atributos( "char", "", "char" ); return _CHAR; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 64 "trabalho.lex"
-{ yylval = Atributos( "char[256]", "" ); return _STRING; }
+{ yylval = Atributos( "char[256]", "", "string" ); return _STRING; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 65 "trabalho.lex"
-{ yylval = Atributos( "int", "" ); return _BOOLEAN; }
+{ yylval = Atributos( "int", "", "int" ); return _BOOLEAN; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
@@ -962,7 +962,7 @@ YY_RULE_SETUP
 case 33:
 YY_RULE_SETUP
 #line 87 "trabalho.lex"
-{ yylval = Atributos( string("_") + yytext, "" ); return _ID; }
+{ yylval = Atributos( string("_") + yytext, "", "" ); return _ID; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
