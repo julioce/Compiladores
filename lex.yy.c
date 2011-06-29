@@ -867,7 +867,7 @@ YY_RULE_SETUP
 case 14:
 YY_RULE_SETUP
 #line 64 "trabalho.lex"
-{ yylval = Atributos( "char[256]", "", "string" ); return _STRING; }
+{ yylval = Atributos( "char[256]", "", "char" ); return _STRING; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP

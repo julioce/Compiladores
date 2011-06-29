@@ -61,7 +61,7 @@ READ          [Rr][Ee][Aa][Dd]
 {INTEGER}       { yylval = Atributos( "int", "", "int" ); return _INTEGER; }
 {DOUBLE}        { yylval = Atributos( "double", "", "double" ); return _DOUBLE; }
 {CHAR}          { yylval = Atributos( "char", "", "char" ); return _CHAR; }
-{STRING}        { yylval = Atributos( "char[256]", "", "string" ); return _STRING; }
+{STRING}        { yylval = Atributos( "char[256]", "", "char" ); return _STRING; }
 {BOOLEAN}       { yylval = Atributos( "int", "", "int" ); return _BOOLEAN; }
 {FUNCTION}      { return _FUNCTION; }
 {ARRAY}         { return _ARRAY; }

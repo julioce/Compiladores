@@ -12,14 +12,6 @@
 
 using namespace std;
 
-int yyparse();
-int yylex();
-void yyerror( const char* st );
-void erroSemantico ( string erro );
-string toStr( int n );
-int toInt( string n );
-string criaTemp();
-string geraCodigoDeclaracaoVarTemp();
 
 struct Atributos {
   string v, c, t;
@@ -28,7 +20,25 @@ struct Atributos {
   Atributos(string v, string c, string t): v(v), c(c), t(t) {} 
 };
 
+map< string, string > ts;
+
+int yyparse();
+int yylex();
+int toInt( string n );
+string toStr( int n );
+string criaTemp();
+string criaLabel( string prefixo );
+string geraCodigoDeclaracaoVarTemp();
+string buscaTipoVar( string nome );
+string tipoOperacao( string opr, 
+                     string tipoA, 
+                     string tipoB );
+
+
+void yyerror( const char* st );
+void erroSemantico ( string erro );
 void geraCodigoOperador(Atributos& ss, Atributos s1, string op, Atributos s3);
+void insereVar( string nome, string tipo );
 
 #define YYSTYPE Atributos
 %}
@@ -56,9 +66,8 @@ Bloco principal do programa:
 PROGRAMA : BLOCO_PRINCIPAL { cout << "#include <iostream>\n\n"
                                      "using namespace std;\n\n" << $1.c << "\n\n" << endl; }
          ; 
-BLOCO_PRINCIPAL : DECLARACOES_GLOBAIS _BEGIN { $$.c = "\nint main() {\n\treturn 0;\n}\n"; }
-                  CMDS _END
-                  { $$.c = $1.c + geraCodigoDeclaracaoVarTemp() + $2.c + $3.c;}
+BLOCO_PRINCIPAL : DECLARACOES_GLOBAIS _BEGIN CMDS _END
+                { $$.c = $1.c + $2.c + geraCodigoDeclaracaoVarTemp() + "\nint main() {\n\treturn 0;\n}\n"; }
                 ; 
 DECLARACOES_GLOBAIS : VAR DECLARACOES_GLOBAIS { $$.c = $1.c + $2.c; }
                     | FUN DECLARACOES_GLOBAIS { $$.c = $1.c + $2.c; }
@@ -82,8 +91,8 @@ DECLARACAO_VAR : LISTA_IDS ':' TIPOS
     
                  for( size_t pos = lista.find( "$" ); pos != string::npos; pos = lista.find( "$" ) ) { 
                    string variavel = lista.substr( 0, pos );
-                   if(tipo == "string"){
-                     $$.c += variavel + " " + tipo + ";\n"; 
+                   if(tipo == "char"){
+                     $$.c += tipo + " " + variavel + "[256];\n"; 
                    }else{
                      $$.c += tipo + " " + variavel + ";\n"; 
                    }
@@ -103,8 +112,8 @@ FUN : _FUNCTION _ID ':' TIPOS CORPO
     | _FUNCTION _ID '(' PARAMS ')' ':' TIPOS CORPO
     | _FUNCTION _ID '(' PARAMS ')' CORPO
     ; 
-CORPO : VAR CMDS _END
-      | CMDS _END
+CORPO : VAR CMDS _END 
+      | CMDS _END 
       ; 
 PARAMS : DECLARACAO_VAR ',' PARAMS
        | DECLARACAO_VAR
@@ -117,14 +126,14 @@ LISTA_E : E ',' LISTA_E
 /*============================
 Bloco de Comandos e operações:
 ============================*/
-CMDS : CMDS CMD
-     |
+CMDS : CMDS CMD { $$.v = ""; $$.c = $1.c + $2.c; }
+     | { $$.v = ""; $$.c = ""; }
      ; 
-CMD : _DO CMDS _END
-    | CMD_ATRIB 
+CMD : _DO CMDS _END { $$.v = ""; $$.c = $1.c + $3.c; }
+    | CMD_ATRIB { $$.c = $1.v; }
     | CMD_SAIDA
     | CMD_ENTRADA
-    | CMD_IF_ELSE
+    | CMD_IF_ELSE 
     | CMD_FOR
     | CMD_WHILE
     | CMD_DO_WHILE
@@ -135,6 +144,10 @@ CMD : _DO CMDS _END
 Comandos de Atribuição:
 ============================*/
 CMD_ATRIB : _ID _ATRIBUICAO E
+          {
+            $$.v = $1.v;
+            $$.c = $3.c + "\t" + $1.v + " = " + $3.v + ";\n";
+          }
           | _ID '[' E ']' _ATRIBUICAO E  
           | _ID '[' E ']' '[' E ']' _ATRIBUICAO E  
           ; 
@@ -149,6 +162,18 @@ CMD_ENTRADA : _READ '(' E ')';
 Comando de Controle:
 ============================*/
 CMD_IF_ELSE : _IF '(' E ')' _DO CMDS _END
+            {
+              string varTeste = criaTemp();
+              string labelFim = criaLabel( "label_fim" );
+              $$.v = "";
+              $$.c = $3.c + 
+                "\t" + varTeste + " != " + $3.v + ";\n" 
+                "\tif( " + varTeste + " ) goto " + 
+                labelFim + ";\n" +
+                $6.c +
+                labelFim +":\n"; 
+ 
+            }
             | _IF '(' E ')' _DO CMDS _ELSE CMDS _END
             ;
 
@@ -235,6 +260,7 @@ ARRAY_BOOLEAN : '[' _VALUE_BOOLEAN ':' _VALUE_BOOLEAN ']';
 #include "lex.yy.c"
 
 int n_temp = 0;
+int n_label = 0;
 
 void yyerror( const char* st ){
   cout << "Erro sintatico: " << st << endl
@@ -266,6 +292,10 @@ int toInt( string n ) {
 
 string criaTemp() {
   return "t" + toStr( ++n_temp );
+}
+
+string criaLabel( string prefixo ) {
+  return prefixo + "_" + toStr( ++n_label );
 }
 
 string geraCodigoDeclaracaoVarTemp() {

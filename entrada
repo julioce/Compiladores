@@ -21,41 +21,6 @@ end
 
 begin
 
-	ch = '?'
-	str = "string"
-	int = 123
-	db = 123.456
-	bool = true
-	ola[15] = teste
-
-
-	if(true) do
-		print(str1)
-		maxInt( x +1, "ola")
-	else
-		do
-			read(double2)
-		end
-	end
-
-
-	for(i=0; i<10; i+1) do
-		do
-			print(str2)
-			maxDouble( x +1, y/3)
-		end
-	end
-
-
-	while( var_qualquer ) do
-    	do
-			print(str2)
-		end
-	end
-
-
-	do
-		print(str2)
-	while( 2 ) end
+	boolen = true
 
 end
