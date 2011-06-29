@@ -82,7 +82,6 @@
 
 using namespace std;
 
-
 struct Atributos {
   string v, c, t;
 
@@ -100,10 +99,7 @@ string criaTemp();
 string criaLabel( string prefixo );
 string geraCodigoDeclaracaoVarTemp();
 string buscaTipoVar( string nome );
-string tipoOperacao( string opr, 
-                     string tipoA, 
-                     string tipoB );
-
+string tipoOperacao( string opr, string tipoA, string tipoB );
 
 void yyerror( const char* st );
 void erroSemantico ( string erro );
@@ -114,7 +110,7 @@ void insereVar( string nome, string tipo );
 
 
 /* Line 189 of yacc.c  */
-#line 118 "y.tab.c"
+#line 114 "y.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -224,7 +220,7 @@ typedef int YYSTYPE;
 
 
 /* Line 264 of yacc.c  */
-#line 228 "y.tab.c"
+#line 224 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -554,16 +550,16 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    66,    66,    69,    72,    73,    74,    81,    83,    84,
-      86,   103,   104,   111,   112,   113,   115,   116,   118,   119,
-     121,   122,   129,   130,   132,   133,   134,   135,   136,   137,
-     138,   139,   140,   146,   151,   152,   158,   159,   164,   177,
-     183,   184,   185,   190,   191,   197,   198,   199,   200,   201,
-     202,   203,   204,   205,   206,   207,   208,   209,   210,   211,
-     213,   214,   215,   216,   217,   218,   225,   226,   227,   228,
-     229,   231,   232,   233,   234,   235,   236,   237,   238,   239,
-     240,   241,   242,   243,   244,   245,   247,   248,   249,   250,
-     251,   253,   254,   255,   256,   257
+       0,    62,    62,    65,    68,    69,    70,    77,    79,    80,
+      82,    99,   100,   107,   108,   109,   111,   112,   114,   115,
+     117,   118,   125,   126,   128,   129,   130,   131,   132,   133,
+     134,   135,   136,   142,   151,   152,   158,   159,   164,   177,
+     198,   199,   200,   205,   206,   212,   213,   214,   215,   216,
+     217,   218,   219,   220,   221,   222,   223,   224,   225,   226,
+     228,   229,   230,   231,   232,   233,   240,   241,   242,   243,
+     244,   246,   247,   248,   249,   250,   251,   252,   253,   254,
+     255,   256,   257,   258,   259,   260,   262,   263,   264,   265,
+     266,   268,   269,   270,   271,   272
 };
 #endif
 
@@ -1670,64 +1666,64 @@ yyreduce:
         case 2:
 
 /* Line 1464 of yacc.c  */
-#line 66 "trabalho.y"
-    { cout << "#include <iostream>\n\n"
+#line 62 "trabalho.y"
+    { cout << "#include <iostream>\n#include <string.h>\n\n"
                                      "using namespace std;\n\n" << (yyvsp[(1) - (1)]).c << "\n\n" << endl; }
     break;
 
   case 3:
 
 /* Line 1464 of yacc.c  */
-#line 70 "trabalho.y"
-    { (yyval).c = (yyvsp[(1) - (4)]).c + (yyvsp[(2) - (4)]).c + geraCodigoDeclaracaoVarTemp() + "\nint main() {\n\treturn 0;\n}\n"; }
+#line 66 "trabalho.y"
+    { (yyval).c = (yyvsp[(1) - (4)]).c + geraCodigoDeclaracaoVarTemp() + "\nint main() {\n\t" + (yyvsp[(3) - (4)]).c + "\treturn 0;\n}\n"; }
     break;
 
   case 4:
 
 /* Line 1464 of yacc.c  */
-#line 72 "trabalho.y"
+#line 68 "trabalho.y"
     { (yyval).c = (yyvsp[(1) - (2)]).c + (yyvsp[(2) - (2)]).c; }
     break;
 
   case 5:
 
 /* Line 1464 of yacc.c  */
-#line 73 "trabalho.y"
+#line 69 "trabalho.y"
     { (yyval).c = (yyvsp[(1) - (2)]).c + (yyvsp[(2) - (2)]).c; }
     break;
 
   case 6:
 
 /* Line 1464 of yacc.c  */
-#line 74 "trabalho.y"
+#line 70 "trabalho.y"
     { (yyval).v = ""; (yyval).c = ""; }
     break;
 
   case 7:
 
 /* Line 1464 of yacc.c  */
-#line 81 "trabalho.y"
+#line 77 "trabalho.y"
     { (yyval) = (yyvsp[(2) - (3)]); }
     break;
 
   case 8:
 
 /* Line 1464 of yacc.c  */
-#line 83 "trabalho.y"
+#line 79 "trabalho.y"
     { (yyval).c = (yyvsp[(1) - (2)]).c + (yyvsp[(2) - (2)]).c; }
     break;
 
   case 9:
 
 /* Line 1464 of yacc.c  */
-#line 84 "trabalho.y"
+#line 80 "trabalho.y"
     { (yyval).v = ""; (yyval).c = ""; }
     break;
 
   case 10:
 
 /* Line 1464 of yacc.c  */
-#line 87 "trabalho.y"
+#line 83 "trabalho.y"
     { 
                  string lista = (yyvsp[(1) - (3)]).v;
                  string tipo = (yyvsp[(3) - (3)]).t;
@@ -1748,45 +1744,49 @@ yyreduce:
   case 11:
 
 /* Line 1464 of yacc.c  */
-#line 103 "trabalho.y"
+#line 99 "trabalho.y"
     { (yyval).v = (yyvsp[(1) - (3)]).v + "$" + (yyvsp[(3) - (3)]).v; }
     break;
 
   case 12:
 
 /* Line 1464 of yacc.c  */
-#line 104 "trabalho.y"
+#line 100 "trabalho.y"
     { (yyval).v = (yyvsp[(1) - (1)]).v + "$"; }
+    break;
+
+  case 22:
+
+/* Line 1464 of yacc.c  */
+#line 125 "trabalho.y"
+    { (yyval).v = ""; (yyval).c = (yyvsp[(1) - (2)]).c + (yyvsp[(2) - (2)]).c; }
     break;
 
   case 23:
 
 /* Line 1464 of yacc.c  */
-#line 130 "trabalho.y"
+#line 126 "trabalho.y"
     { (yyval).v = ""; (yyval).c = ""; }
     break;
 
   case 24:
 
 /* Line 1464 of yacc.c  */
-#line 132 "trabalho.y"
-    { (yyval).c = (yyvsp[(2) - (3)]).v; }
-    break;
-
-  case 25:
-
-/* Line 1464 of yacc.c  */
-#line 133 "trabalho.y"
-    { (yyval).c = (yyvsp[(1) - (1)]).v; }
+#line 128 "trabalho.y"
+    { (yyval).v = ""; (yyval).c = (yyvsp[(1) - (3)]).c + (yyvsp[(2) - (3)]).c + (yyvsp[(3) - (3)]).c; }
     break;
 
   case 33:
 
 /* Line 1464 of yacc.c  */
-#line 147 "trabalho.y"
+#line 143 "trabalho.y"
     {
             (yyval).v = (yyvsp[(1) - (3)]).v;
-            (yyval).c = (yyvsp[(3) - (3)]).c + "\t" + (yyvsp[(1) - (3)]).v + " = " + (yyvsp[(3) - (3)]).v + ";\n";
+            if( (yyvsp[(3) - (3)]).t == ""){
+              (yyval).c = "strcpy(" + (yyvsp[(3) - (3)]).v + ", " + (yyvsp[(1) - (3)]).v + ");\n";
+            }else{
+              (yyval).c = (yyvsp[(3) - (3)]).c + (yyvsp[(1) - (3)]).v + " = " + (yyvsp[(3) - (3)]).v + ";\n";
+            }
           }
     break;
 
@@ -1803,15 +1803,36 @@ yyreduce:
                 "\tif( " + varTeste + " ) goto " + 
                 labelFim + ";\n" +
                 (yyvsp[(6) - (7)]).c +
-                labelFim +":\n"; 
+                "\t" + labelFim +":\n"; 
  
+            }
+    break;
+
+  case 39:
+
+/* Line 1464 of yacc.c  */
+#line 178 "trabalho.y"
+    {
+              string varTeste = criaTemp();
+              string labelFim = criaLabel( "label_fim" );
+              string labelElse = criaLabel( "label_else" );
+              (yyval).v = "";
+              (yyval).c = (yyvsp[(3) - (9)]).c + 
+                     "\t" + varTeste + " = !" + (yyvsp[(3) - (9)]).v + ";\n" 
+                     "\tif( " + varTeste + " ) goto " + 
+                     labelElse +";\n" +
+                     (yyvsp[(6) - (9)]).c +
+                     "\tgoto " + labelFim + ";\n" +
+                     labelElse + ":\n" + 
+                     (yyvsp[(8) - (9)]).c +  
+                     labelFim + ":\n"; 
             }
     break;
 
 
 
 /* Line 1464 of yacc.c  */
-#line 1815 "y.tab.c"
+#line 1836 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2023,7 +2044,7 @@ yyreturn:
 
 
 /* Line 1684 of yacc.c  */
-#line 259 "trabalho.y"
+#line 274 "trabalho.y"
 
 #include "lex.yy.c"
 

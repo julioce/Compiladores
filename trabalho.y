@@ -12,7 +12,6 @@
 
 using namespace std;
 
-
 struct Atributos {
   string v, c, t;
 
@@ -30,10 +29,7 @@ string criaTemp();
 string criaLabel( string prefixo );
 string geraCodigoDeclaracaoVarTemp();
 string buscaTipoVar( string nome );
-string tipoOperacao( string opr, 
-                     string tipoA, 
-                     string tipoB );
-
+string tipoOperacao( string opr, string tipoA, string tipoB );
 
 void yyerror( const char* st );
 void erroSemantico ( string erro );
@@ -63,11 +59,11 @@ void insereVar( string nome, string tipo );
 /*=========================
 Bloco principal do programa:
 ==========================*/
-PROGRAMA : BLOCO_PRINCIPAL { cout << "#include <iostream>\n\n"
+PROGRAMA : BLOCO_PRINCIPAL { cout << "#include <iostream>\n#include <string.h>\n\n"
                                      "using namespace std;\n\n" << $1.c << "\n\n" << endl; }
          ; 
 BLOCO_PRINCIPAL : DECLARACOES_GLOBAIS _BEGIN CMDS _END
-                { $$.c = $1.c + $2.c + geraCodigoDeclaracaoVarTemp() + "\nint main() {\n\treturn 0;\n}\n"; }
+                { $$.c = $1.c + geraCodigoDeclaracaoVarTemp() + "\nint main() {\n\t" + $3.c + "\treturn 0;\n}\n"; }
                 ; 
 DECLARACOES_GLOBAIS : VAR DECLARACOES_GLOBAIS { $$.c = $1.c + $2.c; }
                     | FUN DECLARACOES_GLOBAIS { $$.c = $1.c + $2.c; }
@@ -129,8 +125,8 @@ Bloco de Comandos e operações:
 CMDS : CMDS CMD { $$.v = ""; $$.c = $1.c + $2.c; }
      | { $$.v = ""; $$.c = ""; }
      ; 
-CMD : _DO CMDS _END { $$.v = ""; $$.c = $1.c + $3.c; }
-    | CMD_ATRIB { $$.c = $1.v; }
+CMD : _DO CMDS _END { $$.v = ""; $$.c = $1.c + $2.c + $3.c; }
+    | CMD_ATRIB 
     | CMD_SAIDA
     | CMD_ENTRADA
     | CMD_IF_ELSE 
@@ -146,7 +142,11 @@ Comandos de Atribuição:
 CMD_ATRIB : _ID _ATRIBUICAO E
           {
             $$.v = $1.v;
-            $$.c = $3.c + "\t" + $1.v + " = " + $3.v + ";\n";
+            if( $3.t == ""){
+              $$.c = "strcpy(" + $3.v + ", " + $1.v + ");\n";
+            }else{
+              $$.c = $3.c + $1.v + " = " + $3.v + ";\n";
+            }
           }
           | _ID '[' E ']' _ATRIBUICAO E  
           | _ID '[' E ']' '[' E ']' _ATRIBUICAO E  
@@ -171,10 +171,25 @@ CMD_IF_ELSE : _IF '(' E ')' _DO CMDS _END
                 "\tif( " + varTeste + " ) goto " + 
                 labelFim + ";\n" +
                 $6.c +
-                labelFim +":\n"; 
+                "\t" + labelFim +":\n"; 
  
             }
             | _IF '(' E ')' _DO CMDS _ELSE CMDS _END
+            {
+              string varTeste = criaTemp();
+              string labelFim = criaLabel( "label_fim" );
+              string labelElse = criaLabel( "label_else" );
+              $$.v = "";
+              $$.c = $3.c + 
+                     "\t" + varTeste + " = !" + $3.v + ";\n" 
+                     "\tif( " + varTeste + " ) goto " + 
+                     labelElse +";\n" +
+                     $6.c +
+                     "\tgoto " + labelFim + ";\n" +
+                     labelElse + ":\n" + 
+                     $8.c +  
+                     labelFim + ":\n"; 
+            }
             ;
 
 /*============================
@@ -210,7 +225,7 @@ E : E '+' E
   | E _OR E
   | F
   ;
-F : _ID
+F : _ID 
   | VALUE
   | '(' E ')'
   | _NOT F

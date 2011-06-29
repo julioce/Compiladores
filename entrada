@@ -1,26 +1,13 @@
 var
-	str1, str2 : string
-	db1, db2 : double
+	str1 : string
 end
-
-function str : string
-end
-
-function maxInt(int1 : integer, int2 : integer) : integer
-end
-
-function maxDouble(double1 : double, double2 : double) : double
-	if(double1 > double2) do
-		print(double1)
-	else
-		print(double2)
-	end
-end
-
 
 
 begin
+	str1 = "Ola"
 
-	boolen = true
+	if(1) do
+		print(str1)
+	end
 
 end
