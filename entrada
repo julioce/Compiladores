@@ -4,10 +4,9 @@ end
 
 
 begin
-	str1 = "Ola"
-
-	if(1) do
-		print(str1)
+	
+	if( 1==2 ) do
+		print("Hello World!")
 	end
 
 end

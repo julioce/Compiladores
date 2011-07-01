@@ -1,5 +1,5 @@
 all: __saida.cc
-	less __saida.cc
+	more __saida.cc
 	g++ __saida.cc
 	./a.out
 

@@ -11,6 +11,9 @@ LETRA         [A-Za-z_]
 ASPAS         "\""
 PLICS         "\'"
 
+VALUE_NULL    [Nn][Uu][Ll][Ll]
+VALUE_TRUE    [Tt][Rr][Uu][Ee]
+VALUE_FALSE   [Ff][Aa][Ll][Ss][Ee]
 VALUE_INTEGER {NUMERO}+
 VALUE_DOUBLE  {NUMERO}+("."{NUMERO}+)?
 VALUE_CHAR    {PLICS}.{PLICS}
@@ -47,6 +50,9 @@ READ          [Rr][Ee][Aa][Dd]
 
 {DELIM}   {}
 
+{VALUE_NULL}    { return _VALUE_NULL; }
+{VALUE_TRUE}    { return _VALUE_TRUE; }
+{VALUE_FALSE}   { return _VALUE_FALSE; }
 {VALUE_INTEGER} { yylval = Atributos( yytext, "", "" ); return _VALUE_INTEGER; }
 {VALUE_DOUBLE}  { yylval = Atributos( yytext, "", "" ); return _VALUE_DOUBLE; }
 {VALUE_CHAR}    { yylval = Atributos( yytext, "", "" ); return _VALUE_CHAR; }
@@ -80,9 +86,12 @@ READ          [Rr][Ee][Aa][Dd]
 
 "="             { return _ATRIBUICAO; }
 "<="            { return _MENORIGUAL; }
+"=<"            { return _MENORIGUAL; }
 ">="            { return _MAIORIGUAL; }
+"=>"            { return _MAIORIGUAL; }
 "=="            { return _IGUAL; }
 "!="            { return _DIFERENTE; }
+"=!"            { return _DIFERENTE; }
 
 {ID}            { yylval = Atributos( string("_") + yytext, "", "" ); return _ID; }
 

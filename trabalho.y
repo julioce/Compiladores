@@ -39,7 +39,7 @@ void insereVar( string nome, string tipo );
 #define YYSTYPE Atributos
 %}
 
-%token _VALUE_INTEGER _VALUE_DOUBLE _VALUE_CHAR _VALUE_STRING _VALUE_BOOLEAN
+%token _VALUE_NULL _VALUE_TRUE _VALUE_FALSE _VALUE_INTEGER _VALUE_DOUBLE _VALUE_CHAR _VALUE_STRING _VALUE_BOOLEAN
 %token _BEGIN _DO _END
 %token _VAR _INTEGER _DOUBLE _CHAR _STRING _BOOLEAN _FUNCTION _ARRAY _OF
 %token _AND _OR _NOT
@@ -59,8 +59,8 @@ void insereVar( string nome, string tipo );
 /*=========================
 Bloco principal do programa:
 ==========================*/
-PROGRAMA : BLOCO_PRINCIPAL { cout << "#include <iostream>\n#include <string.h>\n\n"
-                                     "using namespace std;\n\n" << $1.c << "\n\n" << endl; }
+PROGRAMA : BLOCO_PRINCIPAL { cout << "#include <iostream>\n#include <string.h>\n#include <stdio.h>\n\n"
+                                     "using namespace std;\n\n#define TRUE 1\n#define FALSE 0\n\n" << $1.c << "\n\n" << endl; }
          ; 
 BLOCO_PRINCIPAL : DECLARACOES_GLOBAIS _BEGIN CMDS _END
                 { $$.c = $1.c + geraCodigoDeclaracaoVarTemp() + "\nint main() {\n\t" + $3.c + "\treturn 0;\n}\n"; }
@@ -142,11 +142,7 @@ Comandos de Atribuição:
 CMD_ATRIB : _ID _ATRIBUICAO E
           {
             $$.v = $1.v;
-            if( $3.t == ""){
-              $$.c = "strcpy(" + $3.v + ", " + $1.v + ");\n";
-            }else{
-              $$.c = $3.c + $1.v + " = " + $3.v + ";\n";
-            }
+            $$.c = $3.c + " " +$1.v + " = " + $3.v + ";\n";
           }
           | _ID '[' E ']' _ATRIBUICAO E  
           | _ID '[' E ']' '[' E ']' _ATRIBUICAO E  
@@ -155,7 +151,10 @@ CMD_ATRIB : _ID _ATRIBUICAO E
 /*============================
 Comandos de Entrada e Saida:
 ============================*/
-CMD_SAIDA : _PRINT '(' E ')' ; 
+CMD_SAIDA : _PRINT '(' E ')' 
+            { $$.v = "";
+              $$.c = "\tputs("+ $3.v +");\n";
+            } ; 
 CMD_ENTRADA : _READ '(' E ')'; 
 
 /*============================
@@ -167,8 +166,8 @@ CMD_IF_ELSE : _IF '(' E ')' _DO CMDS _END
               string labelFim = criaLabel( "label_fim" );
               $$.v = "";
               $$.c = $3.c + 
-                "\t" + varTeste + " != " + $3.v + ";\n" 
-                "\tif( " + varTeste + " ) goto " + 
+                varTeste + " = " + $3.v + ";\n" 
+                "\tif( !" + varTeste + " ) goto " + 
                 labelFim + ";\n" +
                 $6.c +
                 "\t" + labelFim +":\n"; 
@@ -182,7 +181,7 @@ CMD_IF_ELSE : _IF '(' E ')' _DO CMDS _END
               $$.v = "";
               $$.c = $3.c + 
                      "\t" + varTeste + " = !" + $3.v + ";\n" 
-                     "\tif( " + varTeste + " ) goto " + 
+                     "\tif( !" + varTeste + " ) goto " + 
                      labelElse +";\n" +
                      $6.c +
                      "\tgoto " + labelFim + ";\n" +
@@ -209,25 +208,30 @@ CMD_FUNCTION : _ID
 /*============================
 Operações:
 ============================*/
-E : E '+' E
-  | E '-' E
-  | E '*' E
-  | E '/' E
-  | E '%' E
-  | E '^' E
-  | E '<' E
-  | E '>' E
-  | E _MENORIGUAL E
-  | E _MAIORIGUAL E
-  | E _IGUAL E
-  | E _DIFERENTE E
-  | E _AND E
-  | E _OR E
+E : E '+' E         { geraCodigoOperador( $$, $1, "+", $3 ); }
+  | E '-' E         { geraCodigoOperador( $$, $1, "-", $3 ); }
+  | E '*' E         { geraCodigoOperador( $$, $1, "*", $3 ); }
+  | E '/' E         { geraCodigoOperador( $$, $1, "/", $3 ); }
+  | E '%' E         { geraCodigoOperador( $$, $1, "%", $3 ); }
+  | E '<' E         { geraCodigoOperador( $$, $1, "<", $3 ); }
+  | E '>' E         { geraCodigoOperador( $$, $1, ">", $3 ); }
+  | E _MAIORIGUAL E { geraCodigoOperador( $$, $1, ">=", $3 ); }
+  | E _MENORIGUAL E { geraCodigoOperador( $$, $1, "<=", $3 ); }
+  | E _IGUAL E      { geraCodigoOperador( $$, $1, "==", $3 ); }
+  | E _DIFERENTE E  { geraCodigoOperador( $$, $1, "!=", $3 ); }
+  | E _AND E        { geraCodigoOperador( $$, $1, "&&", $3 ); }
+  | E _OR E         { geraCodigoOperador( $$, $1, "||", $3 ); }
   | F
-  ;
+  ; 
+
+
 F : _ID 
+  { $$.c = $1.c;
+    $$.v = $1.v;
+    $$.t = buscaTipoVar( $1.v );
+  }
   | VALUE
-  | '(' E ')'
+  | '(' E ')' { $$ = $2; }
   | _NOT F
   | '-' F
   | '+' F
@@ -274,8 +278,29 @@ ARRAY_BOOLEAN : '[' _VALUE_BOOLEAN ':' _VALUE_BOOLEAN ']';
 %%
 #include "lex.yy.c"
 
+struct Resultado {
+  string opr, a, b, r;
+} resultado[] = {
+  { "+", "int", "int", "int" },
+  { "+", "int", "double", "double" },
+  { "+", "double", "int", "double" },
+  { "+", "double", "double", "double" },
+  { "+", "char", "char", "string" },
+  { "+", "char", "string", "string" },
+  { "+", "string", "char", "string" },
+  { "+", "string", "string", "string" },
+  { "-", "int", "int", "int" },
+  { "", "", "", "" }
+};
+
 int n_temp = 0;
 int n_label = 0;
+
+void geraCodigoOperador(Atributos& ss, Atributos s1, string op, Atributos s3) {
+  ss.v = criaTemp();
+  ss.c = s1.c + s3.c + 
+  ss.v + " = " + s1.v + " " + op + " " + s3.v + ";\n";  
+}
 
 void yyerror( const char* st ){
   cout << "Erro sintatico: " << st << endl
@@ -287,22 +312,26 @@ void erroSemantico ( string erro ){
   exit(0);
 }
 
+void insereVar( string nome, string tipo ) {
+  if( ts.find( nome ) == ts.end() ) 
+    ts[nome] = tipo;
+  else 
+    erroSemantico( "Variável já declarada - " + nome ); 
+}
+
+string buscaTipoVar( string nome ) {
+  if( ts.find( nome ) == ts.end() ) 
+    erroSemantico( "Variável não declarada - " + nome );
+
+  return ts[nome];
+}
+
 string toStr( int n ) {
   stringstream temp;
   
   temp << n;
 
   return temp.str();
-}
-
-int toInt( string n ) {
-  stringstream temp;
-  int valor;
-  
-  temp << n;
-  temp >> valor;
-
-  return valor;
 }
 
 string criaTemp() {
@@ -322,10 +351,25 @@ string geraCodigoDeclaracaoVarTemp() {
   return aux;
 }
 
-void geraCodigoOperador(Atributos& ss, Atributos s1, string op, Atributos s3) {
-  ss.v = criaTemp();
-  ss.c = s1.c + s3.c + 
-  ss.v + " = " + s1.v + " " + op + " " + s3.v + ";\n";  
+string tipoOperacao( string opr, string tipoA, string tipoB ) {
+  for( int i = 0; resultado[i].opr != ""; i++ ) {
+    if( resultado[i].opr == opr && resultado[i].a == tipoA && resultado[i].b == tipoB )
+      return resultado[i].r;
+  }
+
+  erroSemantico( "O operador '" + opr + "' não está definido " + "para os tipos " + tipoA + " e " + tipoB );
+  return ""; 
+}
+
+
+int toInt( string n ) {
+  stringstream temp;
+  int valor;
+  
+  temp << n;
+  temp >> valor;
+
+  return valor;
 }
 
 int main( int argc, char* argv[] )
