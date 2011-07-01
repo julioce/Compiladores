@@ -1,12 +1,16 @@
 var
-	str1 : string
+	inteiro : integer
+	estringue : string
 end
 
 
 begin
 	
-	if( 1==2 ) do
-		print("Hello World!")
+	inteiro = 0*5
+	estringue = "Estou no If"
+
+	if( inteiro ) do
+		print(estringue)
 	end
 
 end

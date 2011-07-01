@@ -6,7 +6,7 @@
 
 DELIM         [\t\n ]
 NUMERO        [0-9]
-LETRA         [A-Za-z_]
+LETRA         [A-Za-z]
 
 ASPAS         "\""
 PLICS         "\'"
@@ -19,7 +19,7 @@ VALUE_DOUBLE  {NUMERO}+("."{NUMERO}+)?
 VALUE_CHAR    {PLICS}.{PLICS}
 VALUE_STRING  ({ASPAS}|{PLICS})([^'"\n]|[\\][\"]|[\\][\'])*({ASPAS}|{PLICS})
 VALUE_BOOLEAN (([Tt][Rr][Uu][Ee])|([Ff][Aa][Ll][Ss][Ee]))
-ID            {LETRA}({LETRA}|{NUMERO})*
+ID            {LETRA}({LETRA}|{NUMERO}|_)*
 
 BEGIN         [Bb][Ee][Gg][Ii][Nn]
 DO            [Dd][Oo]
@@ -53,22 +53,22 @@ READ          [Rr][Ee][Aa][Dd]
 {VALUE_NULL}    { return _VALUE_NULL; }
 {VALUE_TRUE}    { return _VALUE_TRUE; }
 {VALUE_FALSE}   { return _VALUE_FALSE; }
-{VALUE_INTEGER} { yylval = Atributos( yytext, "", "" ); return _VALUE_INTEGER; }
-{VALUE_DOUBLE}  { yylval = Atributos( yytext, "", "" ); return _VALUE_DOUBLE; }
-{VALUE_CHAR}    { yylval = Atributos( yytext, "", "" ); return _VALUE_CHAR; }
-{VALUE_STRING}  { yylval = Atributos( yytext, "", "" ); return _VALUE_STRING; }
-{VALUE_BOOLEAN} { yylval = Atributos( yytext, "", "" ); return _VALUE_BOOLEAN; }
+{VALUE_INTEGER} { yylval = Atributos( yytext, "", "int" ); return _VALUE_INTEGER; }
+{VALUE_DOUBLE}  { yylval = Atributos( yytext, "", "double" ); return _VALUE_DOUBLE; }
+{VALUE_CHAR}    { yylval = Atributos( yytext, "", "char" ); return _VALUE_CHAR; }
+{VALUE_STRING}  { yylval = Atributos( yytext, "", "string" ); return _VALUE_STRING; }
+{VALUE_BOOLEAN} { yylval = Atributos( yytext, "", "int" ); return _VALUE_BOOLEAN; }
 
 {BEGIN}         { return _BEGIN; }
 {DO}            { return _DO; }
 {END}           { return _END; }
 
 {VAR}           { return _VAR; }
-{INTEGER}       { yylval = Atributos( "int", "", "int" ); return _INTEGER; }
-{DOUBLE}        { yylval = Atributos( "double", "", "double" ); return _DOUBLE; }
-{CHAR}          { yylval = Atributos( "char", "", "char" ); return _CHAR; }
-{STRING}        { yylval = Atributos( "char[256]", "", "char" ); return _STRING; }
-{BOOLEAN}       { yylval = Atributos( "int", "", "int" ); return _BOOLEAN; }
+{INTEGER}       { yylval = Atributos( "int", "", "int " ); return _INTEGER; }
+{DOUBLE}        { yylval = Atributos( "double", "", "double " ); return _DOUBLE; }
+{CHAR}          { yylval = Atributos( "char", "", "char " ); return _CHAR; }
+{STRING}        { yylval = Atributos( "string", "", "string " ); return _STRING; }
+{BOOLEAN}       { yylval = Atributos( "boolean", "", "int " ); return _BOOLEAN; }
 {FUNCTION}      { return _FUNCTION; }
 {ARRAY}         { return _ARRAY; }
 {OF}            { return _OF; }

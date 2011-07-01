@@ -7,16 +7,19 @@ using namespace std;
 #define TRUE 1
 #define FALSE 0
 
-char _str1[256];
-int t1;
-int t2;
+int _inteiro;
+string _estringue[256];
+int _t1;
+int _t2;
 
 int main() {
-	t1 = 1 == 2;
-t2 = t1;
-	if( !t2 ) goto label_fim_1;
-	puts("Hello World!");
-	label_fim_1:
+	_t1 = 0 * 5;
+_inteiro = _t1;
+_estringue = "Estou no If";
+	_t2 = _inteiro;
+	if( !_t2 ) goto label_fim1;
+	printf("%s", _estringue);
+	label_fim1:
 	return 0;
 }
 
