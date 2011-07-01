@@ -59,8 +59,12 @@ void insereVar( string nome, string tipo );
 /*=========================
 Bloco principal do programa:
 ==========================*/
-PROGRAMA : BLOCO_PRINCIPAL { cout << "#include <iostream>\n#include <string.h>\n#include <stdio.h>\n\n"
-                                     "using namespace std;\n\n#define TRUE 1\n#define FALSE 0\n\n" << $1.c << "\n\n" << endl; }
+PROGRAMA : BLOCO_PRINCIPAL { cout << "#include <iostream>\n"
+                                     "#include <string.h>\n"
+                                     "#include <stdio.h>\n\n"
+                                     "using namespace std;\n\n"
+                                     "#define TRUE 1\n"
+                                     "#define FALSE 0\n\n" << $1.c << "\n\n" << endl; }
          ; 
 BLOCO_PRINCIPAL : DECLARACOES_GLOBAIS _BEGIN CMDS _END
                 { $$.c = $1.c + geraCodigoDeclaracaoVarTemp() + "\nint main() {\n" + $3.c + "\treturn 0;\n}\n"; }
@@ -87,7 +91,7 @@ DECLARACAO_VAR : LISTA_IDS ':' TIPOS
     
                  for( size_t pos = lista.find( "$" ); pos != string::npos; pos = lista.find( "$" ) ) { 
                    string variavel = lista.substr( 0, pos );
-                   if(tipo == "string "){
+                   if(tipo == "char "){
                      $$.c += tipo + variavel + "[256];\n"; 
                    }else{
                      $$.c += tipo + variavel + ";\n"; 
@@ -142,7 +146,12 @@ Comandos de Atribuição:
 CMD_ATRIB : _ID _ATRIBUICAO E
           {
             $$.v = $1.v;
-            $$.c = $3.c + $1.v + " = " + $3.v + ";\n";
+            string tipo = $3.t;
+            if(tipo == "string"){
+              $$.c = "strncpy(" + $1.v + ", " + $3.v + ", 256);\n";
+            }else{
+              $$.c = $3.c + $1.v + " = " + $3.v + ";\n";
+            }
           }
           | _ID '[' E ']' _ATRIBUICAO E  
           | _ID '[' E ']' '[' E ']' _ATRIBUICAO E  
@@ -153,7 +162,7 @@ Comandos de Entrada e Saida:
 ============================*/
 CMD_SAIDA : _PRINT '(' E ')' 
             { $$.v = "";
-              $$.c = "\tprintf(\"%s\", "+ $3.v +");\n";
+              $$.c = "\tputs("+ $3.v +");\n";
             } ; 
 CMD_ENTRADA : _READ '(' E ')'; 
 
@@ -180,14 +189,14 @@ CMD_IF_ELSE : _IF '(' E ')' _DO CMDS _END
               string labelElse = criaLabel( "label_else" );
               $$.v = "";
               $$.c = $3.c + 
-                "\t" + varTeste + " !=" + $3.v + ";\n" 
+                "\t" + varTeste + " = " + $3.v + ";\n" 
                 "\tif( !" + varTeste + " ) goto " + 
                 labelElse +";\n" +
                 $6.c +
-                "\tgoto " + labelFim + ";\n" +
+                "\tgoto " + labelFim + ";\n\t" +
                 labelElse + ":\n" + 
                 $8.c +  
-                labelFim + ":\n"; 
+                "\t" + labelFim + ":\n"; 
             }
             ;
 
@@ -232,20 +241,20 @@ F : _ID
   }
   | VALUE
   | '(' E ')' { $$ = $2; }
-  | _NOT F
-  | '-' F
-  | '+' F
+  | _NOT F { $$.v = $1.v + $2.v; }
+  | '-' F { $$.v = $1.v + $2.v; }
+  | '+' F { $$.v = $1.v + $2.v; }
   ; 
 
 
 /*=================================
 Bloco de Tipos, Constantes e Array:
 =================================*/
-VALUE : _VALUE_INTEGER 
-      | _VALUE_DOUBLE
-      | _VALUE_CHAR
-      | _VALUE_STRING
-      | _VALUE_BOOLEAN
+VALUE : _VALUE_INTEGER { $1.t = "int"; $$ = $1; } 
+      | _VALUE_DOUBLE { $1.t = "double"; $$ = $1; }
+      | _VALUE_CHAR { $1.t = "char"; $$ = $1; }
+      | _VALUE_STRING { $1.t = "string"; $$ = $1; }
+      | _VALUE_BOOLEAN { $1.t = "boolean"; $$ = $1; }
       ;
 TIPOS : _INTEGER
       | _DOUBLE
@@ -317,12 +326,12 @@ void insereVar( string nome, string tipo ) {
   if( ts.find( nome ) == ts.end() ) 
     ts[nome] = tipo;
   else 
-    erroSemantico( "Variável já declarada - " + nome ); 
+    erroSemantico( "Variável já declarada: " + nome ); 
 }
 
 string buscaTipoVar( string nome ) {
-  if( ts.find( nome ) != ts.end() ) 
-    erroSemantico( "Variável não declarada - " + nome );
+  if( ts.find( nome ) == ts.end() ) 
+    erroSemantico( "Variável não declarada: " + nome );
 
   return ts[nome];
 }

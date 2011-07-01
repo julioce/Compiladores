@@ -11,6 +11,8 @@ begin
 
 	if( inteiro ) do
 		print(estringue)
+	else
+		print("estou no else")
 	end
 
 end

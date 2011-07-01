@@ -6,7 +6,7 @@
 
 DELIM         [\t\n ]
 NUMERO        [0-9]
-LETRA         [A-Za-z]
+LETRA         [A-Za-z_]
 
 ASPAS         "\""
 PLICS         "\'"
@@ -19,7 +19,7 @@ VALUE_DOUBLE  {NUMERO}+("."{NUMERO}+)?
 VALUE_CHAR    {PLICS}.{PLICS}
 VALUE_STRING  ({ASPAS}|{PLICS})([^'"\n]|[\\][\"]|[\\][\'])*({ASPAS}|{PLICS})
 VALUE_BOOLEAN (([Tt][Rr][Uu][Ee])|([Ff][Aa][Ll][Ss][Ee]))
-ID            {LETRA}({LETRA}|{NUMERO}|_)*
+ID            {LETRA}({LETRA}|{NUMERO})*
 
 BEGIN         [Bb][Ee][Gg][Ii][Nn]
 DO            [Dd][Oo]
@@ -67,7 +67,7 @@ READ          [Rr][Ee][Aa][Dd]
 {INTEGER}       { yylval = Atributos( "int", "", "int " ); return _INTEGER; }
 {DOUBLE}        { yylval = Atributos( "double", "", "double " ); return _DOUBLE; }
 {CHAR}          { yylval = Atributos( "char", "", "char " ); return _CHAR; }
-{STRING}        { yylval = Atributos( "string", "", "string " ); return _STRING; }
+{STRING}        { yylval = Atributos( "string", "", "char " ); return _STRING; }
 {BOOLEAN}       { yylval = Atributos( "boolean", "", "int " ); return _BOOLEAN; }
 {FUNCTION}      { return _FUNCTION; }
 {ARRAY}         { return _ARRAY; }

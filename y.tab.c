@@ -556,16 +556,16 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    62,    62,    65,    68,    69,    70,    77,    79,    80,
-      82,    99,   100,   107,   108,   109,   111,   112,   114,   115,
-     117,   118,   125,   126,   128,   129,   130,   131,   132,   133,
-     134,   135,   136,   142,   147,   148,   154,   158,   163,   176,
-     197,   198,   199,   204,   205,   211,   212,   213,   214,   215,
-     216,   217,   218,   219,   220,   221,   222,   223,   224,   228,
-     233,   234,   235,   236,   237,   244,   245,   246,   247,   248,
-     250,   251,   252,   253,   254,   255,   256,   257,   258,   259,
-     260,   261,   262,   263,   264,   266,   267,   268,   269,   270,
-     272,   273,   274,   275,   276
+       0,    62,    62,    69,    72,    73,    74,    81,    83,    84,
+      86,   103,   104,   111,   112,   113,   115,   116,   118,   119,
+     121,   122,   129,   130,   132,   133,   134,   135,   136,   137,
+     138,   139,   140,   146,   156,   157,   163,   167,   172,   185,
+     206,   207,   208,   213,   214,   220,   221,   222,   223,   224,
+     225,   226,   227,   228,   229,   230,   231,   232,   233,   237,
+     242,   243,   244,   245,   246,   253,   254,   255,   256,   257,
+     259,   260,   261,   262,   263,   264,   265,   266,   267,   268,
+     269,   270,   271,   272,   273,   275,   276,   277,   278,   279,
+     281,   282,   283,   284,   285
 };
 #endif
 
@@ -1667,63 +1667,67 @@ yyreduce:
 
 /* Line 1464 of yacc.c  */
 #line 62 "trabalho.y"
-    { cout << "#include <iostream>\n#include <string.h>\n#include <stdio.h>\n\n"
-                                     "using namespace std;\n\n#define TRUE 1\n#define FALSE 0\n\n" << (yyvsp[(1) - (1)]).c << "\n\n" << endl; }
+    { cout << "#include <iostream>\n"
+                                     "#include <string.h>\n"
+                                     "#include <stdio.h>\n\n"
+                                     "using namespace std;\n\n"
+                                     "#define TRUE 1\n"
+                                     "#define FALSE 0\n\n" << (yyvsp[(1) - (1)]).c << "\n\n" << endl; }
     break;
 
   case 3:
 
 /* Line 1464 of yacc.c  */
-#line 66 "trabalho.y"
+#line 70 "trabalho.y"
     { (yyval).c = (yyvsp[(1) - (4)]).c + geraCodigoDeclaracaoVarTemp() + "\nint main() {\n" + (yyvsp[(3) - (4)]).c + "\treturn 0;\n}\n"; }
     break;
 
   case 4:
 
 /* Line 1464 of yacc.c  */
-#line 68 "trabalho.y"
+#line 72 "trabalho.y"
     { (yyval).c = (yyvsp[(1) - (2)]).c + (yyvsp[(2) - (2)]).c; }
     break;
 
   case 5:
 
 /* Line 1464 of yacc.c  */
-#line 69 "trabalho.y"
+#line 73 "trabalho.y"
     { (yyval).c = (yyvsp[(1) - (2)]).c + (yyvsp[(2) - (2)]).c; }
     break;
 
   case 6:
 
 /* Line 1464 of yacc.c  */
-#line 70 "trabalho.y"
+#line 74 "trabalho.y"
     { (yyval).v = ""; (yyval).c = ""; }
     break;
 
   case 7:
 
 /* Line 1464 of yacc.c  */
-#line 77 "trabalho.y"
+#line 81 "trabalho.y"
     { (yyval) = (yyvsp[(2) - (3)]); }
     break;
 
   case 8:
 
 /* Line 1464 of yacc.c  */
-#line 79 "trabalho.y"
+#line 83 "trabalho.y"
     { (yyval).c = (yyvsp[(1) - (2)]).c + (yyvsp[(2) - (2)]).c; }
     break;
 
   case 9:
 
 /* Line 1464 of yacc.c  */
-#line 80 "trabalho.y"
+#line 84 "trabalho.y"
     { (yyval).v = ""; (yyval).c = ""; }
     break;
 
   case 10:
 
 /* Line 1464 of yacc.c  */
-#line 83 "trabalho.y"
+#line 87 "trabalho.y"
     { 
                  string lista = (yyvsp[(1) - (3)]).v;
                  string tipo = (yyvsp[(3) - (3)]).t;
@@ -1731,7 +1735,7 @@ yyreduce:
     
                  for( size_t pos = lista.find( "$" ); pos != string::npos; pos = lista.find( "$" ) ) { 
                    string variavel = lista.substr( 0, pos );
-                   if(tipo == "string "){
+                   if(tipo == "char "){
                      (yyval).c += tipo + variavel + "[256];\n"; 
                    }else{
                      (yyval).c += tipo + variavel + ";\n"; 
@@ -1744,61 +1748,66 @@ yyreduce:
   case 11:
 
 /* Line 1464 of yacc.c  */
-#line 99 "trabalho.y"
+#line 103 "trabalho.y"
     { (yyval).v = (yyvsp[(1) - (3)]).v + "$" + (yyvsp[(3) - (3)]).v; }
     break;
 
   case 12:
 
 /* Line 1464 of yacc.c  */
-#line 100 "trabalho.y"
+#line 104 "trabalho.y"
     { (yyval).v = (yyvsp[(1) - (1)]).v + "$"; }
     break;
 
   case 22:
 
 /* Line 1464 of yacc.c  */
-#line 125 "trabalho.y"
+#line 129 "trabalho.y"
     { (yyval).v = ""; (yyval).c = (yyvsp[(1) - (2)]).c + (yyvsp[(2) - (2)]).c; }
     break;
 
   case 23:
 
 /* Line 1464 of yacc.c  */
-#line 126 "trabalho.y"
+#line 130 "trabalho.y"
     { (yyval).v = ""; (yyval).c = ""; }
     break;
 
   case 24:
 
 /* Line 1464 of yacc.c  */
-#line 128 "trabalho.y"
+#line 132 "trabalho.y"
     { (yyval).v = ""; (yyval).c = (yyvsp[(1) - (3)]).c + (yyvsp[(2) - (3)]).c + (yyvsp[(3) - (3)]).c; }
     break;
 
   case 33:
 
 /* Line 1464 of yacc.c  */
-#line 143 "trabalho.y"
+#line 147 "trabalho.y"
     {
             (yyval).v = (yyvsp[(1) - (3)]).v;
-            (yyval).c = (yyvsp[(3) - (3)]).c + (yyvsp[(1) - (3)]).v + " = " + (yyvsp[(3) - (3)]).v + ";\n";
+            string tipo = (yyvsp[(3) - (3)]).t;
+            if(tipo == "string"){
+              (yyval).c = "strncpy(" + (yyvsp[(1) - (3)]).v + ", " + (yyvsp[(3) - (3)]).v + ", 256);\n";
+            }else{
+              (yyval).c = (yyvsp[(3) - (3)]).c + (yyvsp[(1) - (3)]).v + " = " + (yyvsp[(3) - (3)]).v + ";\n";
+            }
           }
     break;
 
   case 36:
 
 /* Line 1464 of yacc.c  */
-#line 155 "trabalho.y"
+#line 164 "trabalho.y"
     { (yyval).v = "";
-              (yyval).c = "\tprintf(\"%s\", "+ (yyvsp[(3) - (4)]).v +");\n";
+              (yyval).c = "\tputs("+ (yyvsp[(3) - (4)]).v +");\n";
             }
     break;
 
   case 38:
 
 /* Line 1464 of yacc.c  */
-#line 164 "trabalho.y"
+#line 173 "trabalho.y"
     {
               string varTeste = criaTemp();
               string labelFim = criaLabel( "label_fim" );
@@ -1816,119 +1825,119 @@ yyreduce:
   case 39:
 
 /* Line 1464 of yacc.c  */
-#line 177 "trabalho.y"
+#line 186 "trabalho.y"
     {
               string varTeste = criaTemp();
               string labelFim = criaLabel( "label_fim" );
               string labelElse = criaLabel( "label_else" );
               (yyval).v = "";
               (yyval).c = (yyvsp[(3) - (9)]).c + 
-                "\t" + varTeste + " !=" + (yyvsp[(3) - (9)]).v + ";\n" 
+                "\t" + varTeste + " = " + (yyvsp[(3) - (9)]).v + ";\n" 
                 "\tif( !" + varTeste + " ) goto " + 
                 labelElse +";\n" +
                 (yyvsp[(6) - (9)]).c +
-                "\tgoto " + labelFim + ";\n" +
+                "\tgoto " + labelFim + ";\n\t" +
                 labelElse + ":\n" + 
                 (yyvsp[(8) - (9)]).c +  
-                labelFim + ":\n"; 
+                "\t" + labelFim + ":\n"; 
             }
     break;
 
   case 45:
 
 /* Line 1464 of yacc.c  */
-#line 211 "trabalho.y"
+#line 220 "trabalho.y"
     { geraCodigoOperador( (yyval), (yyvsp[(1) - (3)]), "+", (yyvsp[(3) - (3)]) ); }
     break;
 
   case 46:
 
 /* Line 1464 of yacc.c  */
-#line 212 "trabalho.y"
+#line 221 "trabalho.y"
     { geraCodigoOperador( (yyval), (yyvsp[(1) - (3)]), "-", (yyvsp[(3) - (3)]) ); }
     break;
 
   case 47:
 
 /* Line 1464 of yacc.c  */
-#line 213 "trabalho.y"
+#line 222 "trabalho.y"
     { geraCodigoOperador( (yyval), (yyvsp[(1) - (3)]), "*", (yyvsp[(3) - (3)]) ); }
     break;
 
   case 48:
 
 /* Line 1464 of yacc.c  */
-#line 214 "trabalho.y"
+#line 223 "trabalho.y"
     { geraCodigoOperador( (yyval), (yyvsp[(1) - (3)]), "/", (yyvsp[(3) - (3)]) ); }
     break;
 
   case 49:
 
 /* Line 1464 of yacc.c  */
-#line 215 "trabalho.y"
+#line 224 "trabalho.y"
     { geraCodigoOperador( (yyval), (yyvsp[(1) - (3)]), "%", (yyvsp[(3) - (3)]) ); }
     break;
 
   case 50:
 
 /* Line 1464 of yacc.c  */
-#line 216 "trabalho.y"
+#line 225 "trabalho.y"
     { geraCodigoOperador( (yyval), (yyvsp[(1) - (3)]), "<", (yyvsp[(3) - (3)]) ); }
     break;
 
   case 51:
 
 /* Line 1464 of yacc.c  */
-#line 217 "trabalho.y"
+#line 226 "trabalho.y"
     { geraCodigoOperador( (yyval), (yyvsp[(1) - (3)]), ">", (yyvsp[(3) - (3)]) ); }
     break;
 
   case 52:
 
 /* Line 1464 of yacc.c  */
-#line 218 "trabalho.y"
+#line 227 "trabalho.y"
     { geraCodigoOperador( (yyval), (yyvsp[(1) - (3)]), ">=", (yyvsp[(3) - (3)]) );}
     break;
 
   case 53:
 
 /* Line 1464 of yacc.c  */
-#line 219 "trabalho.y"
+#line 228 "trabalho.y"
     { geraCodigoOperador( (yyval), (yyvsp[(1) - (3)]), "<=", (yyvsp[(3) - (3)]) );}
     break;
 
   case 54:
 
 /* Line 1464 of yacc.c  */
-#line 220 "trabalho.y"
+#line 229 "trabalho.y"
     { geraCodigoOperador( (yyval), (yyvsp[(1) - (3)]), "==", (yyvsp[(3) - (3)]) );}
     break;
 
   case 55:
 
 /* Line 1464 of yacc.c  */
-#line 221 "trabalho.y"
+#line 230 "trabalho.y"
     { geraCodigoOperador( (yyval), (yyvsp[(1) - (3)]), "!=", (yyvsp[(3) - (3)]) );}
     break;
 
   case 56:
 
 /* Line 1464 of yacc.c  */
-#line 222 "trabalho.y"
+#line 231 "trabalho.y"
     { geraCodigoOperador( (yyval), (yyvsp[(1) - (3)]), "&&", (yyvsp[(3) - (3)]) );}
     break;
 
   case 57:
 
 /* Line 1464 of yacc.c  */
-#line 223 "trabalho.y"
+#line 232 "trabalho.y"
     { geraCodigoOperador( (yyval), (yyvsp[(1) - (3)]), "||", (yyvsp[(3) - (3)]) );}
     break;
 
   case 59:
 
 /* Line 1464 of yacc.c  */
-#line 229 "trabalho.y"
+#line 238 "trabalho.y"
     { (yyval).c = (yyvsp[(1) - (1)]).c;
     (yyval).v = (yyvsp[(1) - (1)]).v;
     (yyval).t = buscaTipoVar( (yyvsp[(1) - (1)]).v );
@@ -1938,14 +1947,70 @@ yyreduce:
   case 61:
 
 /* Line 1464 of yacc.c  */
-#line 234 "trabalho.y"
+#line 243 "trabalho.y"
     { (yyval) = (yyvsp[(2) - (3)]); }
+    break;
+
+  case 62:
+
+/* Line 1464 of yacc.c  */
+#line 244 "trabalho.y"
+    { (yyval).v = (yyvsp[(1) - (2)]).v + (yyvsp[(2) - (2)]).v; }
+    break;
+
+  case 63:
+
+/* Line 1464 of yacc.c  */
+#line 245 "trabalho.y"
+    { (yyval).v = (yyvsp[(1) - (2)]).v + (yyvsp[(2) - (2)]).v; }
+    break;
+
+  case 64:
+
+/* Line 1464 of yacc.c  */
+#line 246 "trabalho.y"
+    { (yyval).v = (yyvsp[(1) - (2)]).v + (yyvsp[(2) - (2)]).v; }
+    break;
+
+  case 65:
+
+/* Line 1464 of yacc.c  */
+#line 253 "trabalho.y"
+    { (yyvsp[(1) - (1)]).t = "int"; (yyval) = (yyvsp[(1) - (1)]); }
+    break;
+
+  case 66:
+
+/* Line 1464 of yacc.c  */
+#line 254 "trabalho.y"
+    { (yyvsp[(1) - (1)]).t = "double"; (yyval) = (yyvsp[(1) - (1)]); }
+    break;
+
+  case 67:
+
+/* Line 1464 of yacc.c  */
+#line 255 "trabalho.y"
+    { (yyvsp[(1) - (1)]).t = "char"; (yyval) = (yyvsp[(1) - (1)]); }
+    break;
+
+  case 68:
+
+/* Line 1464 of yacc.c  */
+#line 256 "trabalho.y"
+    { (yyvsp[(1) - (1)]).t = "string"; (yyval) = (yyvsp[(1) - (1)]); }
+    break;
+
+  case 69:
+
+/* Line 1464 of yacc.c  */
+#line 257 "trabalho.y"
+    { (yyvsp[(1) - (1)]).t = "boolean"; (yyval) = (yyvsp[(1) - (1)]); }
     break;
 
 
 
 /* Line 1464 of yacc.c  */
-#line 1949 "y.tab.c"
+#line 2014 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2157,7 +2222,7 @@ yyreturn:
 
 
 /* Line 1684 of yacc.c  */
-#line 278 "trabalho.y"
+#line 287 "trabalho.y"
 
 #include "lex.yy.c"
 
@@ -2200,12 +2265,12 @@ void insereVar( string nome, string tipo ) {
   if( ts.find( nome ) == ts.end() ) 
     ts[nome] = tipo;
   else 
-    erroSemantico( "Variável já declarada - " + nome ); 
+    erroSemantico( "Variável já declarada: " + nome ); 
 }
 
 string buscaTipoVar( string nome ) {
-  if( ts.find( nome ) != ts.end() ) 
-    erroSemantico( "Variável não declarada - " + nome );
+  if( ts.find( nome ) == ts.end() ) 
+    erroSemantico( "Variável não declarada: " + nome );
 
   return ts[nome];
 }
