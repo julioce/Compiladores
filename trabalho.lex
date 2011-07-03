@@ -11,14 +11,13 @@ LETRA         [A-Za-z_]
 ASPAS         "\""
 PLICS         "\'"
 
+TRUE          [Tt][Rr][Uu][Ee]
+FALSE         [Ff][Aa][Ll][Ss][Ee]
 VALUE_NULL    [Nn][Uu][Ll][Ll]
-VALUE_TRUE    [Tt][Rr][Uu][Ee]
-VALUE_FALSE   [Ff][Aa][Ll][Ss][Ee]
 VALUE_INTEGER {NUMERO}+
 VALUE_DOUBLE  {NUMERO}+("."{NUMERO}+)?
 VALUE_CHAR    {PLICS}.{PLICS}
 VALUE_STRING  ({ASPAS}|{PLICS})([^'"\n]|[\\][\"]|[\\][\'])*({ASPAS}|{PLICS})
-VALUE_BOOLEAN (([Tt][Rr][Uu][Ee])|([Ff][Aa][Ll][Ss][Ee]))
 ID            {LETRA}({LETRA}|{NUMERO})*
 
 BEGIN         [Bb][Ee][Gg][Ii][Nn]
@@ -50,25 +49,24 @@ READ          [Rr][Ee][Aa][Dd]
 
 {DELIM}   {}
 
+{TRUE}          { yylval = Atributos( "TRUE", "", "bool" ); return _TRUE; }
+{FALSE}         { yylval = Atributos( "FALSE", "", "bool" ); return _FALSE; }
 {VALUE_NULL}    { return _VALUE_NULL; }
-{VALUE_TRUE}    { return _VALUE_TRUE; }
-{VALUE_FALSE}   { return _VALUE_FALSE; }
 {VALUE_INTEGER} { yylval = Atributos( yytext, "", "int" ); return _VALUE_INTEGER; }
 {VALUE_DOUBLE}  { yylval = Atributos( yytext, "", "double" ); return _VALUE_DOUBLE; }
 {VALUE_CHAR}    { yylval = Atributos( yytext, "", "char" ); return _VALUE_CHAR; }
 {VALUE_STRING}  { yylval = Atributos( yytext, "", "string" ); return _VALUE_STRING; }
-{VALUE_BOOLEAN} { yylval = Atributos( yytext, "", "int" ); return _VALUE_BOOLEAN; }
 
 {BEGIN}         { return _BEGIN; }
 {DO}            { return _DO; }
 {END}           { return _END; }
 
 {VAR}           { return _VAR; }
-{INTEGER}       { yylval = Atributos( "int", "", "int " ); return _INTEGER; }
-{DOUBLE}        { yylval = Atributos( "double", "", "double " ); return _DOUBLE; }
-{CHAR}          { yylval = Atributos( "char", "", "char " ); return _CHAR; }
-{STRING}        { yylval = Atributos( "string", "", "char " ); return _STRING; }
-{BOOLEAN}       { yylval = Atributos( "boolean", "", "int " ); return _BOOLEAN; }
+{INTEGER}       { yylval = Atributos( "integer", "", "int" ); return _INTEGER; }
+{DOUBLE}        { yylval = Atributos( "double", "", "double" ); return _DOUBLE; }
+{CHAR}          { yylval = Atributos( "char", "", "char" ); return _CHAR; }
+{STRING}        { yylval = Atributos( "string", "", "char" ); return _STRING; }
+{BOOLEAN}       { yylval = Atributos( "boolean", "", "bool" ); return _BOOLEAN; }
 {FUNCTION}      { return _FUNCTION; }
 {ARRAY}         { return _ARRAY; }
 {OF}            { return _OF; }

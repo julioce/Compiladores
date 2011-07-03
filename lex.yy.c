@@ -152,7 +152,12 @@ typedef unsigned int flex_uint32_t;
 typedef struct yy_buffer_state *YY_BUFFER_STATE;
 #endif
 
-extern int yyleng;
+#ifndef YY_TYPEDEF_YY_SIZE_T
+#define YY_TYPEDEF_YY_SIZE_T
+typedef size_t yy_size_t;
+#endif
+
+extern yy_size_t yyleng;
 
 extern FILE *yyin, *yyout;
 
@@ -178,11 +183,6 @@ extern FILE *yyin, *yyout;
 
 #define unput(c) yyunput( c, (yytext_ptr)  )
 
-#ifndef YY_TYPEDEF_YY_SIZE_T
-#define YY_TYPEDEF_YY_SIZE_T
-typedef size_t yy_size_t;
-#endif
-
 #ifndef YY_STRUCT_YY_BUFFER_STATE
 #define YY_STRUCT_YY_BUFFER_STATE
 struct yy_buffer_state
@@ -200,7 +200,7 @@ struct yy_buffer_state
 	/* Number of characters read into yy_ch_buf, not including EOB
 	 * characters.
 	 */
-	int yy_n_chars;
+	yy_size_t yy_n_chars;
 
 	/* Whether we "own" the buffer - i.e., we know we created it,
 	 * and can realloc() it to grow it, and should free() it to
@@ -270,8 +270,8 @@ static YY_BUFFER_STATE * yy_buffer_stack = 0; /**< Stack as an array. */
 
 /* yy_hold_char holds the character lost when yytext is formed. */
 static char yy_hold_char;
-static int yy_n_chars;		/* number of characters read into yy_ch_buf */
-int yyleng;
+static yy_size_t yy_n_chars;		/* number of characters read into yy_ch_buf */
+yy_size_t yyleng;
 
 /* Points to current character in buffer. */
 static char *yy_c_buf_p = (char *) 0;
@@ -299,7 +299,7 @@ static void yy_init_buffer (YY_BUFFER_STATE b,FILE *file  );
 
 YY_BUFFER_STATE yy_scan_buffer (char *base,yy_size_t size  );
 YY_BUFFER_STATE yy_scan_string (yyconst char *yy_str  );
-YY_BUFFER_STATE yy_scan_bytes (yyconst char *bytes,int len  );
+YY_BUFFER_STATE yy_scan_bytes (yyconst char *bytes,yy_size_t len  );
 
 void *yyalloc (yy_size_t  );
 void *yyrealloc (void *,yy_size_t  );
@@ -359,8 +359,8 @@ static void yy_fatal_error (yyconst char msg[]  );
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
 
-#define YY_NUM_RULES 41
-#define YY_END_OF_BUFFER 42
+#define YY_NUM_RULES 40
+#define YY_END_OF_BUFFER 41
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -370,20 +370,20 @@ struct yy_trans_info
 	};
 static yyconst flex_int16_t yy_accept[129] =
     {   0,
-        0,    0,   42,   40,    1,    1,   40,   40,   40,    5,
-       40,   31,   40,   39,   39,   39,   39,   39,   39,   39,
-       39,   39,   39,   39,   39,   39,   39,   39,   39,   37,
-        0,    8,    0,    0,    8,    0,    0,    5,   32,   38,
-       33,   36,   35,   34,   39,   39,   39,   39,   39,   39,
-       11,   39,   39,   39,   39,   39,   25,   39,   39,   39,
-       21,   23,   39,   39,   39,   39,   39,   39,    8,    7,
-        7,    7,    6,   22,   39,   39,   39,   39,   39,   39,
-       12,   39,   27,   39,   39,   24,   39,   39,   39,   39,
-       39,   13,   39,   39,   39,   39,   16,   39,   26,   39,
+        0,    0,   41,   39,    1,    1,   39,   39,   39,    5,
+       39,   30,   39,   38,   38,   38,   38,   38,   38,   38,
+       38,   38,   38,   38,   38,   38,   38,   38,   38,   36,
+        0,    8,    0,    0,    8,    0,    0,    5,   31,   37,
+       32,   35,   34,   33,   38,   38,   38,   38,   38,   38,
+       10,   38,   38,   38,   38,   38,   24,   38,   38,   38,
+       20,   22,   38,   38,   38,   38,   38,   38,    8,    7,
+        7,    7,    6,   21,   38,   38,   38,   38,   38,   38,
+       11,   38,   26,   38,   38,   23,   38,   38,   38,   38,
+       38,   12,   38,   38,   38,   38,   15,   38,   25,   38,
 
-       39,   39,    2,   39,   30,   39,    3,   39,   20,   10,
-       39,   39,    4,   39,   39,   29,   39,   28,   39,   15,
-       39,   39,   17,   18,   39,   14,   19,    0
+       38,   38,    4,   38,   29,   38,    2,   38,   19,    9,
+       38,   38,    3,   38,   38,   28,   38,   27,   38,   14,
+       38,   38,   16,   17,   38,   13,   18,    0
     } ;
 
 static yyconst flex_int32_t yy_ec[256] =
@@ -571,7 +571,7 @@ FILE *yyget_out (void );
 
 void yyset_out  (FILE * out_str  );
 
-int yyget_leng (void );
+yy_size_t yyget_leng (void );
 
 char *yyget_text (void );
 
@@ -632,7 +632,7 @@ static int input (void );
 	if ( YY_CURRENT_BUFFER_LVALUE->yy_is_interactive ) \
 		{ \
 		int c = '*'; \
-		int n; \
+		yy_size_t n; \
 		for ( n = 0; n < max_size && \
 			     (c = getc( yyin )) != EOF && c != '\n'; ++n ) \
 			buf[n] = (char) c; \
@@ -714,7 +714,7 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 49 "trabalho.lex"
+#line 48 "trabalho.lex"
 
 
 #line 721 "lex.yy.c"
@@ -803,210 +803,205 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 51 "trabalho.lex"
+#line 50 "trabalho.lex"
 {}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 53 "trabalho.lex"
-{ return _VALUE_NULL; }
+#line 52 "trabalho.lex"
+{ yylval = Atributos( "TRUE", "", "bool" ); return _TRUE; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 54 "trabalho.lex"
-{ return _VALUE_TRUE; }
+#line 53 "trabalho.lex"
+{ yylval = Atributos( "FALSE", "", "bool" ); return _FALSE; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 55 "trabalho.lex"
-{ return _VALUE_FALSE; }
+#line 54 "trabalho.lex"
+{ return _VALUE_NULL; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 56 "trabalho.lex"
+#line 55 "trabalho.lex"
 { yylval = Atributos( yytext, "", "int" ); return _VALUE_INTEGER; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 57 "trabalho.lex"
+#line 56 "trabalho.lex"
 { yylval = Atributos( yytext, "", "double" ); return _VALUE_DOUBLE; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 58 "trabalho.lex"
+#line 57 "trabalho.lex"
 { yylval = Atributos( yytext, "", "char" ); return _VALUE_CHAR; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 59 "trabalho.lex"
+#line 58 "trabalho.lex"
 { yylval = Atributos( yytext, "", "string" ); return _VALUE_STRING; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 60 "trabalho.lex"
-{ yylval = Atributos( yytext, "", "int" ); return _VALUE_BOOLEAN; }
+{ return _BEGIN; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 62 "trabalho.lex"
-{ return _BEGIN; }
+#line 61 "trabalho.lex"
+{ return _DO; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 63 "trabalho.lex"
-{ return _DO; }
+#line 62 "trabalho.lex"
+{ return _END; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 64 "trabalho.lex"
-{ return _END; }
+{ return _VAR; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 66 "trabalho.lex"
-{ return _VAR; }
+#line 65 "trabalho.lex"
+{ yylval = Atributos( "integer", "", "int" ); return _INTEGER; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 67 "trabalho.lex"
-{ yylval = Atributos( "int", "", "int " ); return _INTEGER; }
+#line 66 "trabalho.lex"
+{ yylval = Atributos( "double", "", "double" ); return _DOUBLE; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 68 "trabalho.lex"
-{ yylval = Atributos( "double", "", "double " ); return _DOUBLE; }
+#line 67 "trabalho.lex"
+{ yylval = Atributos( "char", "", "char" ); return _CHAR; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 69 "trabalho.lex"
-{ yylval = Atributos( "char", "", "char " ); return _CHAR; }
+#line 68 "trabalho.lex"
+{ yylval = Atributos( "string", "", "char" ); return _STRING; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 70 "trabalho.lex"
-{ yylval = Atributos( "string", "", "char " ); return _STRING; }
+#line 69 "trabalho.lex"
+{ yylval = Atributos( "boolean", "", "bool" ); return _BOOLEAN; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 71 "trabalho.lex"
-{ yylval = Atributos( "boolean", "", "int " ); return _BOOLEAN; }
+#line 70 "trabalho.lex"
+{ return _FUNCTION; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 72 "trabalho.lex"
-{ return _FUNCTION; }
+#line 71 "trabalho.lex"
+{ return _ARRAY; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 73 "trabalho.lex"
-{ return _ARRAY; }
+#line 72 "trabalho.lex"
+{ return _OF; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 74 "trabalho.lex"
-{ return _OF; }
+{ return _AND; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 76 "trabalho.lex"
-{ return _AND; }
+#line 75 "trabalho.lex"
+{ return _OR; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 77 "trabalho.lex"
-{ return _OR; }
+#line 76 "trabalho.lex"
+{ return _NOT; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
 #line 78 "trabalho.lex"
-{ return _NOT; }
+{ return _IF; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 80 "trabalho.lex"
-{ return _IF; }
+#line 79 "trabalho.lex"
+{ return _ELSE; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 81 "trabalho.lex"
-{ return _ELSE; }
+#line 80 "trabalho.lex"
+{ return _FOR; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 82 "trabalho.lex"
-{ return _FOR; }
+#line 81 "trabalho.lex"
+{ return _WHILE; } 
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 83 "trabalho.lex"
-{ return _WHILE; } 
+#line 82 "trabalho.lex"
+{ return _PRINT; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 84 "trabalho.lex"
-{ return _PRINT; }
+#line 83 "trabalho.lex"
+{ return _READ; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
 #line 85 "trabalho.lex"
-{ return _READ; }
+{ return _ATRIBUICAO; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 87 "trabalho.lex"
-{ return _ATRIBUICAO; }
+#line 86 "trabalho.lex"
+{ return _MENORIGUAL; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 88 "trabalho.lex"
+#line 87 "trabalho.lex"
 { return _MENORIGUAL; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 89 "trabalho.lex"
-{ return _MENORIGUAL; }
+#line 88 "trabalho.lex"
+{ return _MAIORIGUAL; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 90 "trabalho.lex"
+#line 89 "trabalho.lex"
 { return _MAIORIGUAL; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 91 "trabalho.lex"
-{ return _MAIORIGUAL; }
+#line 90 "trabalho.lex"
+{ return _IGUAL; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 92 "trabalho.lex"
-{ return _IGUAL; }
+#line 91 "trabalho.lex"
+{ return _DIFERENTE; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 93 "trabalho.lex"
+#line 92 "trabalho.lex"
 { return _DIFERENTE; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
 #line 94 "trabalho.lex"
-{ return _DIFERENTE; }
+{ yylval = Atributos( string("_") + yytext, "", "" ); return _ID; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
 #line 96 "trabalho.lex"
-{ yylval = Atributos( string("_") + yytext, "", "" ); return _ID; }
+{ return *yytext; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
 #line 98 "trabalho.lex"
-{ return *yytext; }
-	YY_BREAK
-case 41:
-YY_RULE_SETUP
-#line 100 "trabalho.lex"
 ECHO;
 	YY_BREAK
-#line 1010 "lex.yy.c"
+#line 1005 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1192,7 +1187,7 @@ static int yy_get_next_buffer (void)
 
 	else
 		{
-			int num_to_read =
+			yy_size_t num_to_read =
 			YY_CURRENT_BUFFER_LVALUE->yy_buf_size - number_to_move - 1;
 
 		while ( num_to_read <= 0 )
@@ -1206,7 +1201,7 @@ static int yy_get_next_buffer (void)
 
 			if ( b->yy_is_our_buffer )
 				{
-				int new_size = b->yy_buf_size * 2;
+				yy_size_t new_size = b->yy_buf_size * 2;
 
 				if ( new_size <= 0 )
 					b->yy_buf_size += b->yy_buf_size / 8;
@@ -1237,7 +1232,7 @@ static int yy_get_next_buffer (void)
 
 		/* Read in more data. */
 		YY_INPUT( (&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[number_to_move]),
-			(yy_n_chars), (size_t) num_to_read );
+			(yy_n_chars), num_to_read );
 
 		YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars);
 		}
@@ -1347,7 +1342,7 @@ static int yy_get_next_buffer (void)
 	if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
 		{ /* need to shift things up to make room */
 		/* +2 for EOB chars. */
-		register int number_to_move = (yy_n_chars) + 2;
+		register yy_size_t number_to_move = (yy_n_chars) + 2;
 		register char *dest = &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[
 					YY_CURRENT_BUFFER_LVALUE->yy_buf_size + 2];
 		register char *source =
@@ -1396,7 +1391,7 @@ static int yy_get_next_buffer (void)
 
 		else
 			{ /* need more input */
-			int offset = (yy_c_buf_p) - (yytext_ptr);
+			yy_size_t offset = (yy_c_buf_p) - (yytext_ptr);
 			++(yy_c_buf_p);
 
 			switch ( yy_get_next_buffer(  ) )
@@ -1420,7 +1415,7 @@ static int yy_get_next_buffer (void)
 				case EOB_ACT_END_OF_FILE:
 					{
 					if ( yywrap( ) )
-						return EOF;
+						return 0;
 
 					if ( ! (yy_did_buffer_switch_on_eof) )
 						YY_NEW_FILE;
@@ -1556,19 +1551,9 @@ static void yy_load_buffer_state  (void)
 	yyfree((void *) b  );
 }
 
-#ifndef _UNISTD_H /* assume unistd.h has isatty() for us */
-#ifdef __cplusplus
-extern "C" {
-#endif
-#ifdef __THROW /* this is a gnuism */
-extern int isatty (int ) __THROW;
-#else
+#ifndef __cplusplus
 extern int isatty (int );
-#endif
-#ifdef __cplusplus
-}
-#endif
-#endif
+#endif /* __cplusplus */
     
 /* Initializes or reinitializes a buffer.
  * This function is sometimes called more than once on the same buffer,
@@ -1682,7 +1667,7 @@ void yypop_buffer_state (void)
  */
 static void yyensure_buffer_stack (void)
 {
-	int num_to_alloc;
+	yy_size_t num_to_alloc;
     
 	if (!(yy_buffer_stack)) {
 
@@ -1779,12 +1764,11 @@ YY_BUFFER_STATE yy_scan_string (yyconst char * yystr )
  * 
  * @return the newly allocated buffer state object.
  */
-YY_BUFFER_STATE yy_scan_bytes  (yyconst char * yybytes, int  _yybytes_len )
+YY_BUFFER_STATE yy_scan_bytes  (yyconst char * yybytes, yy_size_t  _yybytes_len )
 {
 	YY_BUFFER_STATE b;
 	char *buf;
-	yy_size_t n;
-	int i;
+	yy_size_t n, i;
     
 	/* Get memory for full buffer, including space for trailing EOB's. */
 	n = _yybytes_len + 2;
@@ -1866,7 +1850,7 @@ FILE *yyget_out  (void)
 /** Get the length of the current token.
  * 
  */
-int yyget_leng  (void)
+yy_size_t yyget_leng  (void)
 {
         return yyleng;
 }
@@ -2014,7 +1998,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 100 "trabalho.lex"
+#line 98 "trabalho.lex"
 
 
 

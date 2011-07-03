@@ -1,18 +1,16 @@
 var
 	inteiro : integer
-	estringue : string
 end
 
 
 begin
 	
-	inteiro = 0*5
-	estringue = "Estou no If"
+	inteiro = 0
 
 	if( inteiro ) do
-		print(estringue)
+		print("Estou no If")
 	else
-		print("estou no else")
+		print("Estou no Else")
 	end
 
 end

@@ -19,13 +19,11 @@ struct Atributos {
   Atributos(string v, string c, string t): v(v), c(c), t(t) {} 
 };
 
-map< string, string > ts;
-
 int yyparse();
 int yylex();
 int toInt( string n );
 string toStr( int n );
-string criaTemp();
+string criaTemp( string tipo );
 string criaLabel( string prefixo );
 string geraCodigoDeclaracaoVarTemp();
 string buscaTipoVar( string nome );
@@ -36,10 +34,12 @@ void erroSemantico( string erro );
 void geraCodigoOperador(Atributos& ss, Atributos s1, string op, Atributos s3);
 void insereVar( string nome, string tipo );
 
+map< string, string > ts;
+
 #define YYSTYPE Atributos
 %}
 
-%token _VALUE_NULL _VALUE_TRUE _VALUE_FALSE _VALUE_INTEGER _VALUE_DOUBLE _VALUE_CHAR _VALUE_STRING _VALUE_BOOLEAN
+%token _VALUE_NULL _TRUE _FALSE _VALUE_INTEGER _VALUE_DOUBLE _VALUE_CHAR _VALUE_STRING
 %token _BEGIN _DO _END
 %token _VAR _INTEGER _DOUBLE _CHAR _STRING _BOOLEAN _FUNCTION _ARRAY _OF
 %token _AND _OR _NOT
@@ -91,11 +91,12 @@ DECLARACAO_VAR : LISTA_IDS ':' TIPOS
     
                  for( size_t pos = lista.find( "$" ); pos != string::npos; pos = lista.find( "$" ) ) { 
                    string variavel = lista.substr( 0, pos );
-                   if(tipo == "char "){
-                     $$.c += tipo + variavel + "[256];\n"; 
+                   if(tipo == "char"){
+                     $$.c += tipo + " " + variavel + "[256];\n"; 
                    }else{
-                     $$.c += tipo + variavel + ";\n"; 
+                     $$.c += tipo + " " + variavel + ";\n"; 
                    }
+                   insereVar( variavel, tipo );
                    lista = lista.substr( pos+1 );
                  }
                }
@@ -145,12 +146,18 @@ Comandos de Atribuição:
 ============================*/
 CMD_ATRIB : _ID _ATRIBUICAO E
           {
-            $$.v = $1.v;
-            string tipo = $3.t;
-            if(tipo == "string"){
-              $$.c = "strncpy(" + $1.v + ", " + $3.v + ", 256);\n";
-            }else{
+          	$1.t = buscaTipoVar( $1.v );
+            $$.t = ""; 
+            $$.v = "";
+
+            if( ($1.t == $3.t && $1.t != "string") || ($1.t == "double" && $3.t == "int") ){
               $$.c = $3.c + $1.v + " = " + $3.v + ";\n";
+            }else if( $1.t == "string" && $3.t == "string" ){
+              $$.c = "strncpy(" + $1.v + ", " + $3.v + ", 256);\n";
+            }else if( $1.t == "string" && $3.t == "char" ){
+              $$.c = $3.c + $1.v + "[0] = " + $3.v + ";\n" + $1.v + "[1] = 0;\n";
+            }else{
+              erroSemantico( "Não é possível atribuir " + $3.t + " à " + $1.t );
             }
           }
           | _ID '[' E ']' _ATRIBUICAO E  
@@ -171,7 +178,7 @@ Comando de Controle:
 ============================*/
 CMD_IF_ELSE : _IF '(' E ')' _DO CMDS _END
             {
-              string varTeste = criaTemp();
+              string varTeste = criaTemp( "bool" );
               string labelFim = criaLabel( "label_fim" );
               $$.v = "";
               $$.c = $3.c + 
@@ -184,7 +191,7 @@ CMD_IF_ELSE : _IF '(' E ')' _DO CMDS _END
             }
             | _IF '(' E ')' _DO CMDS _ELSE CMDS _END
             {
-              string varTeste = criaTemp();
+              string varTeste = criaTemp( "bool" );
               string labelFim = criaLabel( "label_fim" );
               string labelElse = criaLabel( "label_else" );
               $$.v = "";
@@ -235,7 +242,8 @@ E : E '+' E         { geraCodigoOperador( $$, $1, "+", $3 ); }
 
 
 F : _ID 
-  { $$.c = $1.c;
+  { 
+  	$$.c = $1.c;
     $$.v = $1.v;
     $$.t = buscaTipoVar( $1.v );
   }
@@ -250,17 +258,18 @@ F : _ID
 /*=================================
 Bloco de Tipos, Constantes e Array:
 =================================*/
-VALUE : _VALUE_INTEGER { $1.t = "int"; $$ = $1; } 
-      | _VALUE_DOUBLE { $1.t = "double"; $$ = $1; }
-      | _VALUE_CHAR { $1.t = "char"; $$ = $1; }
-      | _VALUE_STRING { $1.t = "string"; $$ = $1; }
-      | _VALUE_BOOLEAN { $1.t = "boolean"; $$ = $1; }
+VALUE : _VALUE_INTEGER  
+      | _VALUE_DOUBLE 
+      | _VALUE_CHAR 
+      | _VALUE_STRING
+      | _TRUE
+      | _FALSE
       ;
-TIPOS : _INTEGER
-      | _DOUBLE
-      | _CHAR
-      | _STRING
-      | _BOOLEAN
+TIPOS : _INTEGER 
+      | _DOUBLE 
+      | _CHAR 
+      | _STRING 
+      | _BOOLEAN 
       | _ARRAY TIPO_ARRAY _OF _INTEGER
       | _ARRAY TIPO_ARRAY _OF _DOUBLE
       | _ARRAY TIPO_ARRAY _OF _CHAR
@@ -282,7 +291,10 @@ ARRAY_INTEGER : '[' _VALUE_INTEGER ':' _VALUE_INTEGER ']';
 ARRAY_DOUBLE :  '[' _VALUE_DOUBLE  ':' _VALUE_DOUBLE  ']';
 ARRAY_CHAR :    '['  _VALUE_CHAR   ':'  _VALUE_CHAR   ']';
 ARRAY_STRING :  '[' _VALUE_STRING  ':'  _VALUE_STRING ']';
-ARRAY_BOOLEAN : '[' _VALUE_BOOLEAN ':' _VALUE_BOOLEAN ']';
+ARRAY_BOOLEAN : '[' _TRUE ':' _TRUE ']';
+ARRAY_BOOLEAN : '[' _TRUE ':' _FALSE ']';
+ARRAY_BOOLEAN : '[' _FALSE ':' _TRUE ']';
+ARRAY_BOOLEAN : '[' _FALSE ':' _FALSE ']';
 
 %%
 #include "lex.yy.c"
@@ -290,25 +302,49 @@ ARRAY_BOOLEAN : '[' _VALUE_BOOLEAN ':' _VALUE_BOOLEAN ']';
 struct Resultado {
   string opr, a, b, r;
 } resultado[] = {
-  { "+", "int ", "int ", "int " },
-  { "+", "int ", "double ", "double " },
-  { "+", "double ", "int ", "double " },
-  { "+", "double ", "double ", "double " },
-  { "+", "char ", "char ", "string " },
-  { "+", "char ", "string ", "string " },
-  { "+", "string ", "char ", "string " },
-  { "+", "string ", "string ", "string " },
+  { "+", "int ", "int ", "int" },
+  { "+", "int ", "double ", "double" },
+  { "+", "double ", "int ", "double" },
+  { "+", "double ", "double ", "double" },
+  { "+", "char ", "char ", "string" },
+  { "+", "char ", "string ", "string" },
+  { "+", "string ", "char ", "string" },
+  { "+", "string ", "string ", "string" },
   { "-", "int ", "int ", "int" },
   { "", "", "", "" }
 };
 
-int n_temp = 0;
+struct Temporarias {
+  int tipo_int;
+  int tipo_char;
+  int tipo_double;
+  int tipo_string;
+  int tipo_bool;
+} n_temp = { 0, 0, 0, 0, 0 };
+
 int n_label = 0;
 
 void geraCodigoOperador(Atributos& ss, Atributos s1, string op, Atributos s3) {
-  ss.v = criaTemp();
-  ss.c = "\t" + s1.c + s3.c + 
-  ss.v + " = " + s1.v + " " + op + " " + s3.v + ";\n";  
+  ss.t = tipoOperacao( op, s1.t, s3.t ); 
+  ss.v = criaTemp( ss.t );
+
+  if( s1.t != "string" && s3.t != "string" )
+    ss.c = s1.c + s3.c + "\t" + ss.v + " = " + s1.v + " " + op + " " + s3.v + ";\n";  
+  else {
+    string strA = s1.v, strB = s3.v, conversoes = "";
+
+    if( s1.t == "char" ) {
+      strA = criaTemp( "string" );
+      conversoes += "\t" + strA + "[0] = " + s1.v + ";\n" + "\t" + strA + "[1] = 0;\n"; 
+    }
+
+    if( s3.t == "char" ) {
+      strB = criaTemp( "string" );
+      conversoes += "\t" + strB + "[0] = " + s3.v + ";\n" + "\t" + strB + "[1] = 0;\n"; 
+    }
+
+    ss.c = s1.c + s3.c + conversoes + "\tstrncpy( " + ss.v + ", " + strA + ",256 );\n" + "\tstrcat( " + ss.v + ", " + strB + " );\n";
+  } 
 }
 
 void yyerror( const char* st ){
@@ -343,19 +379,44 @@ string toStr( int n ) {
   return temp.str();
 }
 
-string criaTemp() {
-  return "_t" + toStr( ++n_temp );
+string criaTemp( string tipo ) {
+  if( tipo == "int" )
+    return "_t_int_" + toStr( ++n_temp.tipo_int );
+  else if( tipo == "char" )
+    return "_t_char_" + toStr( ++n_temp.tipo_char );
+  else if( tipo == "double" )
+    return "_t_double_" + toStr( ++n_temp.tipo_double );
+  else if( tipo == "string" )
+    return "_t_string_" + toStr( ++n_temp.tipo_string );
+  else if( tipo == "bool" )
+    return "_t_boolean_" + toStr( ++n_temp.tipo_bool );
+  else
+    erroSemantico( "Bug interno do Compilador." );
+
+  return "";
 }
 
 string criaLabel( string prefixo ) {
-  return prefixo + toStr( ++n_label );
+  return prefixo + "_" + toStr( ++n_label );
 }
 
 string geraCodigoDeclaracaoVarTemp() {
   string aux = "";
   
-  for( int i = 1; i <= n_temp; i++ )
-    aux += "int _t" + toStr( i ) + ";\n";
+  for( int i = 1; i <= n_temp.tipo_int; i++ )
+    aux += "int _t_int_" + toStr( i ) + ";\n";
+
+  for( int i = 1; i <= n_temp.tipo_char; i++ )
+    aux += "char _t_char_" + toStr( i ) + ";\n";
+
+  for( int i = 1; i <= n_temp.tipo_bool; i++ )
+    aux += "int _t_boolean_" + toStr( i ) + ";\n";
+
+  for( int i = 1; i <= n_temp.tipo_double; i++ )
+    aux += "double _t_double_" + toStr( i ) + ";\n";
+
+  for( int i = 1; i <= n_temp.tipo_string; i++ )
+    aux += "char _t_string_" + toStr( i ) + "[256];\n";
 
   return aux;
 }

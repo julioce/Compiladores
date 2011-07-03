@@ -8,13 +8,17 @@ using namespace std;
 #define FALSE 0
 
 int _inteiro;
-char _estringue[256];
-int _t1;
+int _t_boolean_1;
 
 int main() {
-	_t1 = 0 * 5;
-_inteiro = _t1;
-strncpy(_estringue, "Estou no If", 256);
+_inteiro = 0;
+	_t_boolean_1 = _inteiro;
+	if( !_t_boolean_1 ) goto label_else_2;
+	puts("Estou no If");
+	goto label_fim_1;
+	label_else_2:
+	puts("Estou no Else");
+	label_fim_1:
 	return 0;
 }
 
