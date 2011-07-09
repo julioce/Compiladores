@@ -1,16 +1,25 @@
 var
 	inteiro : integer
+	estringue_inicio, estringue_fim, estringue_final  : string
+	xar : char
 end
 
 
 begin
 	
-	inteiro = 0
+	xar = '!'
+	inteiro = 99
+	estringue_inicio = "Início ->"
+	estringue_fim = "...<- Final"
 
 	if( inteiro ) do
 		print("Estou no If")
 	else
 		print("Estou no Else")
 	end
+
+	estringue_final = estringue_inicio + estringue_fim + xar
+
+	print(estringue_final)
 
 end

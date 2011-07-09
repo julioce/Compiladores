@@ -22,6 +22,7 @@ struct Atributos {
 int yyparse();
 int yylex();
 int toInt( string n );
+
 string toStr( int n );
 string criaTemp( string tipo );
 string criaLabel( string prefixo );
@@ -64,7 +65,7 @@ PROGRAMA : BLOCO_PRINCIPAL { cout << "#include <iostream>\n"
                                      "#include <stdio.h>\n\n"
                                      "using namespace std;\n\n"
                                      "#define TRUE 1\n"
-                                     "#define FALSE 0\n\n" << $1.c << "\n\n" << endl; }
+                                     "#define FALSE 0\n\n" << $1.c << "\n" << endl; }
          ; 
 BLOCO_PRINCIPAL : DECLARACOES_GLOBAIS _BEGIN CMDS _END
                 { $$.c = $1.c + geraCodigoDeclaracaoVarTemp() + "\nint main() {\n" + $3.c + "\treturn 0;\n}\n"; }
@@ -91,8 +92,8 @@ DECLARACAO_VAR : LISTA_IDS ':' TIPOS
     
                  for( size_t pos = lista.find( "$" ); pos != string::npos; pos = lista.find( "$" ) ) { 
                    string variavel = lista.substr( 0, pos );
-                   if(tipo == "char"){
-                     $$.c += tipo + " " + variavel + "[256];\n"; 
+                   if(tipo == "string"){
+                     $$.c += "char " + variavel + "[256];\n"; 
                    }else{
                      $$.c += tipo + " " + variavel + ";\n"; 
                    }
@@ -133,7 +134,6 @@ CMDS : CMDS CMD { $$.v = ""; $$.c = $1.c + $2.c; }
 CMD : _DO CMDS _END { $$.v = ""; $$.c = $1.c + $2.c + $3.c; }
     | CMD_ATRIB 
     | CMD_SAIDA
-    | CMD_ENTRADA
     | CMD_IF_ELSE 
     | CMD_FOR
     | CMD_WHILE
@@ -146,16 +146,18 @@ Comandos de Atribuição:
 ============================*/
 CMD_ATRIB : _ID _ATRIBUICAO E
           {
-          	$1.t = buscaTipoVar( $1.v );
+            $1.t = buscaTipoVar( $1.v );
             $$.t = ""; 
             $$.v = "";
 
+            $$.c = $3.c;
+
             if( ($1.t == $3.t && $1.t != "string") || ($1.t == "double" && $3.t == "int") ){
-              $$.c = $3.c + $1.v + " = " + $3.v + ";\n";
+              $$.c += "\t" + $3.c + $1.v + " = " + $3.v + ";\n";
             }else if( $1.t == "string" && $3.t == "string" ){
-              $$.c = "strncpy(" + $1.v + ", " + $3.v + ", 256);\n";
+              $$.c += "\tstrncpy(" + $1.v + ", " + $3.v + ", 256);\n";
             }else if( $1.t == "string" && $3.t == "char" ){
-              $$.c = $3.c + $1.v + "[0] = " + $3.v + ";\n" + $1.v + "[1] = 0;\n";
+              $$.c += "\t" + $3.c + $1.v + "[0] = " + $3.v + ";\n" + $1.v + "[1] = 0;\n";
             }else{
               erroSemantico( "Não é possível atribuir " + $3.t + " à " + $1.t );
             }
@@ -165,13 +167,13 @@ CMD_ATRIB : _ID _ATRIBUICAO E
           ; 
 
 /*============================
-Comandos de Entrada e Saida:
+Comandos de Saida:
 ============================*/
 CMD_SAIDA : _PRINT '(' E ')' 
-            { $$.v = "";
+            {
+              $$.v = "";
               $$.c = "\tputs("+ $3.v +");\n";
-            } ; 
-CMD_ENTRADA : _READ '(' E ')'; 
+            } ;
 
 /*============================
 Comando de Controle:
@@ -243,7 +245,7 @@ E : E '+' E         { geraCodigoOperador( $$, $1, "+", $3 ); }
 
 F : _ID 
   { 
-  	$$.c = $1.c;
+    $$.c = $1.c;
     $$.v = $1.v;
     $$.t = buscaTipoVar( $1.v );
   }
@@ -302,15 +304,15 @@ ARRAY_BOOLEAN : '[' _FALSE ':' _FALSE ']';
 struct Resultado {
   string opr, a, b, r;
 } resultado[] = {
-  { "+", "int ", "int ", "int" },
-  { "+", "int ", "double ", "double" },
-  { "+", "double ", "int ", "double" },
-  { "+", "double ", "double ", "double" },
-  { "+", "char ", "char ", "string" },
-  { "+", "char ", "string ", "string" },
-  { "+", "string ", "char ", "string" },
-  { "+", "string ", "string ", "string" },
-  { "-", "int ", "int ", "int" },
+  { "+", "int", "int", "int" },
+  { "+", "int", "double", "double" },
+  { "+", "double", "int", "double" },
+  { "+", "double", "double", "double" },
+  { "+", "char", "char", "string" },
+  { "+", "char", "string", "string" },
+  { "+", "string", "char", "string" },
+  { "+", "string", "string", "string" },
+  { "-", "int", "int", "int" },
   { "", "", "", "" }
 };
 
@@ -324,18 +326,19 @@ struct Temporarias {
 
 int n_label = 0;
 
-void geraCodigoOperador(Atributos& ss, Atributos s1, string op, Atributos s3) {
+void geraCodigoOperador( Atributos& ss, Atributos s1, string op, Atributos s3 ) {
   ss.t = tipoOperacao( op, s1.t, s3.t ); 
   ss.v = criaTemp( ss.t );
 
-  if( s1.t != "string" && s3.t != "string" )
+  if( s1.t != "string" && s3.t != "string" ) {
     ss.c = s1.c + s3.c + "\t" + ss.v + " = " + s1.v + " " + op + " " + s3.v + ";\n";  
-  else {
-    string strA = s1.v, strB = s3.v, conversoes = "";
+  } else {
+    string strA = s1.v, strB = s3.v;
+    string conversoes = "";
 
     if( s1.t == "char" ) {
       strA = criaTemp( "string" );
-      conversoes += "\t" + strA + "[0] = " + s1.v + ";\n" + "\t" + strA + "[1] = 0;\n"; 
+      conversoes += strA + "[0] = " + s1.v + ";\n" + "\t" + strA + "[1] = 0;\n"; 
     }
 
     if( s3.t == "char" ) {
@@ -343,12 +346,12 @@ void geraCodigoOperador(Atributos& ss, Atributos s1, string op, Atributos s3) {
       conversoes += "\t" + strB + "[0] = " + s3.v + ";\n" + "\t" + strB + "[1] = 0;\n"; 
     }
 
-    ss.c = s1.c + s3.c + conversoes + "\tstrncpy( " + ss.v + ", " + strA + ",256 );\n" + "\tstrcat( " + ss.v + ", " + strB + " );\n";
-  } 
+    ss.c = s1.c + s3.c + conversoes + "\tstrncpy(" + ss.v + ", " + strA + ", 256);\n" + "\tstrcat(" + ss.v + ", " + strB + ");\n";
+  }
 }
 
 void yyerror( const char* st ){
-  cout << "Erro sintatico: " << st << endl
+  cout << "Erro sintático: " << st << endl
        << "Erro anterior ao token: " << yytext << endl;
 }
 
@@ -380,18 +383,18 @@ string toStr( int n ) {
 }
 
 string criaTemp( string tipo ) {
-  if( tipo == "int" )
+  if( tipo == "int" ) {
     return "_t_int_" + toStr( ++n_temp.tipo_int );
-  else if( tipo == "char" )
+  }else if( tipo == "char" ) {
     return "_t_char_" + toStr( ++n_temp.tipo_char );
-  else if( tipo == "double" )
+  }else if( tipo == "double" ) {
     return "_t_double_" + toStr( ++n_temp.tipo_double );
-  else if( tipo == "string" )
+  }else if( tipo == "string" ) {
     return "_t_string_" + toStr( ++n_temp.tipo_string );
-  else if( tipo == "bool" )
+  }else if( tipo == "bool" ) {
     return "_t_boolean_" + toStr( ++n_temp.tipo_bool );
-  else
-    erroSemantico( "Bug interno do Compilador." );
+  }else
+    erroSemantico( "Bug interno do Compilador ao criar variáveis temporárias." );
 
   return "";
 }
@@ -423,11 +426,11 @@ string geraCodigoDeclaracaoVarTemp() {
 
 string tipoOperacao( string opr, string tipoA, string tipoB ) {
   for( int i = 0; resultado[i].opr != ""; i++ ) {
-    if( resultado[i].opr == opr && resultado[i].a == tipoA && resultado[i].b == tipoB )
+    if( (resultado[i].opr == opr) && (resultado[i].a == tipoA) && (resultado[i].b == tipoB) )
       return resultado[i].r;
   }
 
-  erroSemantico( "O operador '" + opr + "' não está definido " + "para os tipos " + tipoA + " e " + tipoB );
+  erroSemantico( "O operador '" + opr + "' não está definido para os tipos " + tipoA + " e " + tipoB );
   return ""; 
 }
 

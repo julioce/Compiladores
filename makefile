@@ -1,4 +1,5 @@
 all: __saida.cc
+	clear
 	more __saida.cc
 	g++ __saida.cc
 	./a.out

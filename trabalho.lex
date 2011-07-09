@@ -17,7 +17,7 @@ VALUE_NULL    [Nn][Uu][Ll][Ll]
 VALUE_INTEGER {NUMERO}+
 VALUE_DOUBLE  {NUMERO}+("."{NUMERO}+)?
 VALUE_CHAR    {PLICS}.{PLICS}
-VALUE_STRING  ({ASPAS}|{PLICS})([^'"\n]|[\\][\"]|[\\][\'])*({ASPAS}|{PLICS})
+VALUE_STRING  {ASPAS}([^'"\n]|[\\][\"]|[\\][\'])*{ASPAS}
 ID            {LETRA}({LETRA}|{NUMERO})*
 
 BEGIN         [Bb][Ee][Gg][Ii][Nn]
@@ -65,7 +65,7 @@ READ          [Rr][Ee][Aa][Dd]
 {INTEGER}       { yylval = Atributos( "integer", "", "int" ); return _INTEGER; }
 {DOUBLE}        { yylval = Atributos( "double", "", "double" ); return _DOUBLE; }
 {CHAR}          { yylval = Atributos( "char", "", "char" ); return _CHAR; }
-{STRING}        { yylval = Atributos( "string", "", "char" ); return _STRING; }
+{STRING}        { yylval = Atributos( "string", "", "string" ); return _STRING; }
 {BOOLEAN}       { yylval = Atributos( "boolean", "", "bool" ); return _BOOLEAN; }
 {FUNCTION}      { return _FUNCTION; }
 {ARRAY}         { return _ARRAY; }
