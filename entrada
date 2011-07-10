@@ -1,25 +1,36 @@
 var
 	inteiro : integer
-	estringue_inicio, estringue_fim, estringue_final  : string
+	dobou_1, dobou_2 : double
+	buleano : boolean
+	estringue_inicio, estringue_fim, estringue_final, estringue_status : string
 	xar : char
 end
 
 
 begin
 	
+	inteiro = 1
+	dobou_1 = 9.99
+	dobou_2 = 9.99
+	buleano = True
+	estringue_inicio = "Início ..."
+	estringue_fim = "... Final"
 	xar = '!'
-	inteiro = 99
-	estringue_inicio = "Início ->"
-	estringue_fim = "...<- Final"
+	
 
-	if( inteiro ) do
-		print("Estou no If")
+	if( inteiro and buleano ) do
+		if( dobou_1 == dobou_2 ) do
+			estringue_status = "dobou_1 = " + dobou_1 + " e é dobou_2 = " + dobou_2 + ". Logo eles são iguais!"
+		else
+			if( dobou_1 > dobou_2 ) do
+				estringue_status = "dobou_1 = " + dobou_1 + " e é maior que dobou_2!"
+			else
+				estringue_status = "dobou_2 = " + dobou_2 + " e é maior que dobou_1!"
+			end
+		end
+		print(estringue_status)
 	else
 		print("Estou no Else")
 	end
-
-	estringue_final = estringue_inicio + estringue_fim + xar
-
-	print(estringue_final)
 
 end

@@ -52,7 +52,7 @@ map< string, string > ts;
 %left _AND
 %nonassoc '<' '>' _MENORIGUAL _MAIORIGUAL _IGUAL _DIFERENTE
 %left '+' '-'
-%left '*' '/' '%' '^'
+%left '*' '/' '%'
 
 %start PROGRAMA
 
@@ -304,15 +304,91 @@ ARRAY_BOOLEAN : '[' _FALSE ':' _FALSE ']';
 struct Resultado {
   string opr, a, b, r;
 } resultado[] = {
-  { "+", "int", "int", "int" },
-  { "+", "int", "double", "double" },
-  { "+", "double", "int", "double" },
-  { "+", "double", "double", "double" },
+  //Concatenação de int, double, char e strings
   { "+", "char", "char", "string" },
   { "+", "char", "string", "string" },
   { "+", "string", "char", "string" },
   { "+", "string", "string", "string" },
+  { "+", "int", "char", "string" },
+  { "+", "char", "int", "string" },
+  { "+", "double", "char", "string" },
+  { "+", "char", "double", "string" },
+  { "+", "int", "string", "string" },
+  { "+", "string", "int", "string" },
+  { "+", "double", "string", "string" },
+  { "+", "string", "double", "string" },
+  
+  //Opreações aritméticas básicas
+  { "+", "int", "int", "int" },
+  { "+", "int", "double", "double" },
+  { "+", "double", "int", "double" },
+  { "+", "double", "double", "double" },
   { "-", "int", "int", "int" },
+  { "-", "double", "int", "double" },
+  { "-", "int", "double", "double" },
+  { "-", "double", "double", "double" },
+  { "*", "int", "int", "int" },
+  { "*", "int", "double", "double" },
+  { "*", "double", "int", "double" },
+  { "*", "double", "double", "double" },
+  { "%", "int", "int", "int" },
+  { "%", "double", "int", "double" },
+  { "%", "int", "double", "double" },
+  { "%", "double", "double", "double" },
+  
+  //Operação OR lógico
+  { "||", "int", "int", "bool" },
+  { "||", "int", "bool", "bool" },
+  { "||", "bool", "int", "bool" },
+  { "||", "bool", "bool", "bool" },
+  { "||", "double", "double", "bool" },
+  { "||", "int", "double", "bool" },
+  { "||", "double", "int", "bool" },
+  { "||", "double", "double", "bool" },
+  
+  //Operação AND lógico
+  { "&&", "int", "int", "bool" },
+  { "&&", "int", "bool", "bool" },
+  { "&&", "bool", "int", "bool" },
+  { "&&", "bool", "bool", "bool" },
+  { "&&", "double", "double", "bool" },
+  { "&&", "int", "double", "bool" },
+  { "&&", "double", "int", "bool" },
+  { "&&", "double", "double", "bool" },
+  
+  //Comparação aritmética ==
+  { "==", "int", "int", "bool" },
+  { "==", "int", "double", "bool" },
+  { "==", "int", "bool", "bool" },
+  { "==", "double", "double", "bool" },
+  { "==", "double", "int", "bool" },
+  { "==", "double", "bool", "bool" },
+  { "==", "bool", "double", "bool" },
+  { "==", "bool", "bool", "bool" },
+  
+  //Comparação aritmética >
+  { ">", "int", "int", "bool" },
+  { ">", "int", "double", "bool" },
+  { ">", "double", "int", "bool" },
+  { ">", "double", "double", "bool" },
+  
+  //Comparação aritmética >=
+  { ">=", "int", "int", "bool" },
+  { ">=", "int", "double", "bool" },
+  { ">=", "double", "int", "bool" },
+  { ">=", "double", "double", "bool" },
+  
+  //Comparação aritmética <
+  { "<", "int", "int", "bool" },
+  { "<", "int", "double", "bool" },
+  { "<", "double", "int", "bool" },
+  { "<", "double", "double", "bool" },
+  
+  //Comparação aritmética <=
+  { "<=", "int", "int", "bool" },
+  { "<=", "int", "double", "bool" },
+  { "<=", "double", "int", "bool" },
+  { "<=", "double", "double", "bool" },
   { "", "", "", "" }
 };
 
@@ -329,24 +405,59 @@ int n_label = 0;
 void geraCodigoOperador( Atributos& ss, Atributos s1, string op, Atributos s3 ) {
   ss.t = tipoOperacao( op, s1.t, s3.t ); 
   ss.v = criaTemp( ss.t );
-
-  if( s1.t != "string" && s3.t != "string" ) {
-    ss.c = s1.c + s3.c + "\t" + ss.v + " = " + s1.v + " " + op + " " + s3.v + ";\n";  
-  } else {
-    string strA = s1.v, strB = s3.v;
-    string conversoes = "";
-
-    if( s1.t == "char" ) {
-      strA = criaTemp( "string" );
-      conversoes += strA + "[0] = " + s1.v + ";\n" + "\t" + strA + "[1] = 0;\n"; 
-    }
-
-    if( s3.t == "char" ) {
+  string strA = s1.v, strB = s3.v, conversoes = "";
+  
+  
+  if( (s1.t == "int" && s3.t == "int") || 
+      (s1.t == "int" && s3.t == "double") || 
+      (s1.t == "double" && s3.t == "int") || 
+      (s1.t == "double" && s3.t == "double") ||
+      (s1.t == "int" && s3.t == "bool") || 
+      (s1.t == "bool" && s3.t == "int") || 
+      (s1.t == "bool" && s3.t == "bool") || 
+      (s1.t == "double" && s3.t == "bool") || 
+      (s1.t == "bool" && s3.t == "double") ){
+  	ss.c = s1.c + s3.c + "\t" + ss.v + " = " + strA + " " + op + " " + strB + ";\n";
+  	
+  }else{
+  	if( s1.t == "string" && s3.t == "string" ){
+  	  strA = criaTemp( "string" );
+  	  conversoes += "\tstrncpy(" + strA + ", " + s1.v + ", 256);\n" + "\tstrcat(" + strA + ", " + strB + ");\n";
+  	  ss.c = s1.c + s3.c + conversoes + "\tstrncpy(" + ss.v + ", " + strA + ", 256);\n";
+  	  
+    }else if( s1.t == "char" && s3.t == "string" ){
+  	  strA = criaTemp( "string" );
+      conversoes += strA + "[0] = " + s1.v + ";\n" + "\t" + strA + "[1] = 0;\n";
+      ss.c = s1.c + s3.c + conversoes + "\tstrncpy(" + ss.v + ", " + strA + ", 256);\n\tstrcat(" + ss.v + ", " + strB + ");\n";
+      
+    }else if( s1.t == "string" && s3.t == "char" ){
       strB = criaTemp( "string" );
-      conversoes += "\t" + strB + "[0] = " + s3.v + ";\n" + "\t" + strB + "[1] = 0;\n"; 
-    }
-
-    ss.c = s1.c + s3.c + conversoes + "\tstrncpy(" + ss.v + ", " + strA + ", 256);\n" + "\tstrcat(" + ss.v + ", " + strB + ");\n";
+      conversoes += "\t" + strB + "[0] = " + s3.v + ";\n" + "\t" + strB + "[1] = 0;\n";
+      ss.c = s1.c + s3.c + conversoes + "\tstrncpy(" + ss.v + ", " + strA + ", 256);\n\tstrcat(" + ss.v + ", " + strB + ");\n";
+      
+    }else if( s1.t == "char" && s3.t == "char" ){
+      strA = criaTemp( "string" );
+      conversoes += strA + "[0] = " + s1.v + ";\n" + "\t" + strA + "[1] = 0;\n";
+      strB = criaTemp( "string" );
+      conversoes += "\t" + strB + "[0] = " + s3.v + ";\n" + "\t" + strB + "[1] = 0;\n";
+      ss.c = s1.c + s3.c + conversoes + "\tstrncpy(" + ss.v + ", " + strA + ", 256);\n\tstrcat(" + ss.v + ", " + strB + ");\n";
+      
+    }else if( s1.t == "double" && s3.t == "string" ){
+      strA = criaTemp( "string" );
+      strB = criaTemp( "string" );
+      conversoes += "\tsprintf(" + strA + ", \"%lf\", " + s1.v + ");\n";
+      conversoes += "\tstrncpy(" + strB + ", " + s3.v + ", 256);\n";
+      ss.c = s1.c + s3.c + conversoes + "\tstrncpy(" + ss.v + ", " + strA + ", 256);\n\tstrcat(" + ss.v + ", " + strB + ");\n";
+      
+    }else if( s1.t == "string" && s3.t == "double" ){
+      strA = criaTemp( "string" );
+      strB = criaTemp( "string" );
+      conversoes += "\tsprintf(" + strB + ", \"%lf\", " + s3.v + ");\n";
+      conversoes += "\tstrncpy(" + strA + ", " + s1.v + ", 256);\n";
+      ss.c = s1.c + s3.c + conversoes + "\tstrncpy(" + ss.v + ", " + strA + ", 256);\n\tstrcat(" + ss.v + ", " + strB + ");\n";
+      
+    }    
+    
   }
 }
 
@@ -413,7 +524,7 @@ string geraCodigoDeclaracaoVarTemp() {
     aux += "char _t_char_" + toStr( i ) + ";\n";
 
   for( int i = 1; i <= n_temp.tipo_bool; i++ )
-    aux += "int _t_boolean_" + toStr( i ) + ";\n";
+    aux += "bool _t_boolean_" + toStr( i ) + ";\n";
 
   for( int i = 1; i <= n_temp.tipo_double; i++ )
     aux += "double _t_double_" + toStr( i ) + ";\n";
