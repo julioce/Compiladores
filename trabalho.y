@@ -44,7 +44,7 @@ map< string, string > ts;
 %token _BEGIN _DO _END
 %token _VAR _INTEGER _DOUBLE _CHAR _STRING _BOOLEAN _FUNCTION _ARRAY _OF
 %token _AND _OR _NOT
-%token _IF _ELSE _FOR _WHILE _PRINT _READ
+%token _IF _ELSE _FOR _WHILE _PRINT 
 %token _ATRIBUICAO _MENORIGUAL _MAIORIGUAL _IGUAL _DIFERENTE 
 %token _ID
 

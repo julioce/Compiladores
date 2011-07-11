@@ -43,7 +43,6 @@ ELSE          [Ee][Ll][Ss][Ee]
 FOR           [Ff][Oo][Rr]
 WHILE         [Ww][Hh][Ii][Ll][Ee]
 PRINT         [Pp][Rr][Ii][Nn][Tt]
-READ          [Rr][Ee][Aa][Dd]
  
 %%
 
@@ -80,7 +79,6 @@ READ          [Rr][Ee][Aa][Dd]
 {FOR}           { return _FOR; }
 {WHILE}         { return _WHILE; } 
 {PRINT}         { return _PRINT; }
-{READ}          { return _READ; }
 
 "="             { return _ATRIBUICAO; }
 "<="            { return _MENORIGUAL; }

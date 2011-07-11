@@ -54,6 +54,7 @@ int main() {
 	_t_boolean_1 = _inteiro && _buleano;
 	_t_boolean_6 = _t_boolean_1;
 	if( !_t_boolean_6 ) goto label_else_6;
+	puts("Estou no If");
 	_t_boolean_2 = _dobou_1 == _dobou_2;
 	_t_boolean_5 = _t_boolean_2;
 	if( !_t_boolean_5 ) goto label_else_4;
@@ -62,7 +63,7 @@ int main() {
 	strncpy(_t_string_1, _t_string_2, 256);
 	strcat(_t_string_1, _t_string_3);
 	strncpy(_t_string_5, _t_string_1, 256);
-	strcat(_t_string_5, " e dobou_2 = ");
+	strcat(_t_string_5, " e é dobou_2 = ");
 	strncpy(_t_string_4, _t_string_5, 256);
 	sprintf(_t_string_8, "%lf", _dobou_2);
 	strncpy(_t_string_7, _t_string_4, 256);

@@ -19,6 +19,8 @@ begin
 	
 
 	if( inteiro and buleano ) do
+		print("Estou no If")
+
 		if( dobou_1 == dobou_2 ) do
 			estringue_status = "dobou_1 = " + dobou_1 + " e é dobou_2 = " + dobou_2 + ". Logo eles são iguais!"
 		else
