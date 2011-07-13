@@ -1,2 +1,10 @@
 #ignores .DS files
 .DS_Store
+
+#ignores generated files
+a.out
+lex.yy.c
+__saida.cc
+trabalho
+y.output
+y.tab.c
