@@ -63,9 +63,7 @@ Bloco principal do programa:
 PROGRAMA : BLOCO_PRINCIPAL { cout << "#include <iostream>\n"
                                      "#include <string.h>\n"
                                      "#include <stdio.h>\n\n"
-                                     "using namespace std;\n\n"
-                                     "#define TRUE 1\n"
-                                     "#define FALSE 0\n\n" << $1.c << "\n" << endl; }
+                                     "using namespace std;\n\n" << $1.c << "\n" << endl; }
          ; 
 BLOCO_PRINCIPAL : DECLARACOES_GLOBAIS _BEGIN CMDS _END
                 { $$.c = $1.c + geraCodigoDeclaracaoVarTemp() + "\nint main() {\n" + $3.c + "\treturn 0;\n}\n"; }
@@ -94,6 +92,8 @@ DECLARACAO_VAR : LISTA_IDS ':' TIPOS
                    string variavel = lista.substr( 0, pos );
                    if(tipo == "string"){
                      $$.c += "char " + variavel + "[256];\n"; 
+                   }else if(tipo == "bool"){
+                     $$.c += "int " + variavel + ";\n"; 
                    }else{
                      $$.c += tipo + " " + variavel + ";\n"; 
                    }
@@ -184,8 +184,8 @@ CMD_IF_ELSE : _IF '(' E ')' _DO CMDS _END
               string labelFim = criaLabel( "label_fim" );
               $$.v = "";
               $$.c = $3.c + 
-                "\t" + varTeste + " = " + $3.v + ";\n" 
-                "\tif( !" + varTeste + " ) goto " + 
+                "\t" + varTeste + " = !" + $3.v + ";\n" 
+                "\tif( " + varTeste + " ) goto " + 
                 labelFim + ";\n" +
                 $6.c +
                 "\t" + labelFim +":\n"; 
@@ -198,8 +198,8 @@ CMD_IF_ELSE : _IF '(' E ')' _DO CMDS _END
               string labelElse = criaLabel( "label_else" );
               $$.v = "";
               $$.c = $3.c + 
-                "\t" + varTeste + " = " + $3.v + ";\n" 
-                "\tif( !" + varTeste + " ) goto " + 
+                "\t" + varTeste + " = !" + $3.v + ";\n" 
+                "\tif( " + varTeste + " ) goto " + 
                 labelElse +";\n" +
                 $6.c +
                 "\tgoto " + labelFim + ";\n\t" +
@@ -524,7 +524,7 @@ string geraCodigoDeclaracaoVarTemp() {
     aux += "char _t_char_" + toStr( i ) + ";\n";
 
   for( int i = 1; i <= n_temp.tipo_bool; i++ )
-    aux += "bool _t_boolean_" + toStr( i ) + ";\n";
+    aux += "int _t_boolean_" + toStr( i ) + ";\n";
 
   for( int i = 1; i <= n_temp.tipo_double; i++ )
     aux += "double _t_double_" + toStr( i ) + ";\n";

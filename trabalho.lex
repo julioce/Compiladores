@@ -48,8 +48,8 @@ PRINT         [Pp][Rr][Ii][Nn][Tt]
 
 {DELIM}   {}
 
-{TRUE}          { yylval = Atributos( "TRUE", "", "bool" ); return _TRUE; }
-{FALSE}         { yylval = Atributos( "FALSE", "", "bool" ); return _FALSE; }
+{TRUE}          { yylval = Atributos( "1", "", "bool" ); return _TRUE; }
+{FALSE}         { yylval = Atributos( "0", "", "bool" ); return _FALSE; }
 {VALUE_NULL}    { return _VALUE_NULL; }
 {VALUE_INTEGER} { yylval = Atributos( yytext, "", "int" ); return _VALUE_INTEGER; }
 {VALUE_DOUBLE}  { yylval = Atributos( yytext, "", "double" ); return _VALUE_DOUBLE; }
