@@ -1,5 +1,5 @@
 var
-	inteiro : integer
+	intero : integer
 	dobou_1, dobou_2 : double
 	buleano : boolean
 	estringue_inicio, estringue_fim, estringue_final, estringue_status : string
@@ -8,15 +8,8 @@ end
 
 
 begin
-	
-	for ( i=0 ; i<10 ) do
-		print("Variável i=")
-		print(i)
-		print("!\n")
-		i=i+1
-	end
-	
-	inteiro = 1
+    
+	intero = 1
 	dobou_1 = 9.99
 	dobou_2 = 9.99
 	buleano = True
@@ -24,7 +17,21 @@ begin
 	estringue_fim = "... Final"
 	xar = '!'
 
-	if( inteiro and buleano ) do
+	while ( intero < 10 ) do
+		print("Variável intero=")
+		print(intero)
+		print("!\n")
+		intero = intero + 1
+	end
+	
+	for ( i=0 ; i<10 ) do
+		print("Variável i=")
+		print(i)
+		print("!\n")
+		i=i+1
+	end
+
+	if( intero and buleano ) do
 		print("Estou no If\n")
 
 		if( dobou_1 == dobou_2 ) do

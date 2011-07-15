@@ -45,7 +45,7 @@ map< string, string > ts;
 %token _BEGIN _DO _END
 %token _VAR _INTEGER _DOUBLE _CHAR _STRING _BOOLEAN _FUNCTION _ARRAY _OF
 %token _AND _OR _NOT
-%token _IF _ELSE _FOR _WHILE _PRINT 
+%token _IF _ELSE _FOR _WHILE _PRINT _READ
 %token _ATRIBUICAO _MENORIGUAL _MAIORIGUAL _IGUAL _DIFERENTE 
 %token _ID
 
@@ -135,6 +135,7 @@ CMDS : CMDS CMD { $$.v = ""; $$.c = $1.c + $2.c; }
 CMD : _DO CMDS _END { $$.v = ""; $$.c = $1.c + $2.c + $3.c; }
     | CMD_ATRIB 
     | CMD_SAIDA
+    | CMD_ENTRADA
     | CMD_IF_ELSE 
     | CMD_FOR
     | CMD_WHILE
@@ -187,7 +188,7 @@ CMD_ATRIB_LOCAL : _ID _ATRIBUICAO _VALUE_INTEGER
                 ;
 
 /*============================
-Comandos de Saida:
+Comandos de Entrada e Saída:
 ============================*/
 CMD_SAIDA : _PRINT '(' E ')' 
             {
@@ -201,6 +202,12 @@ CMD_SAIDA : _PRINT '(' E ')'
               }else{
               	$$.c += "\tprintf(" + $3.v + ");\n";
               }
+            }
+            ;
+CMD_ENTRADA : _READ '(' _ID ')' 
+            {
+              $$.v = "";
+              $$.c += "\tscanf(\"%d\", &" + $3.v + ");\n\tgetchar();\n";
             }
             ;
 
@@ -243,19 +250,47 @@ CMD_FOR : _FOR '(' CMD_ATRIB_LOCAL ';' E ')' _DO CMDS _END
         {
           string varTeste = criaTemp( "bool" );
           string labelFim = criaLabel( "label_fim" );
-          string labelElse = criaLabel( "label_else" );
+          string labelTeste = criaLabel( "label_teste" );
           
           $$.v = "";
-          $$.c = $3.c + "\t" + labelElse + ":\n" + $5.c + 
+          $$.c = $3.c + "\t" + labelTeste + ":\n" + $5.c + 
           "\t" + varTeste + " = !" + $5.v + ";\n" + 
           "\tif( " + varTeste + " ) goto " + labelFim +";\n" +
           $8.c +
-          "\tgoto " + labelElse + ";\n" + 
+          "\tgoto " + labelTeste + ";\n" + 
           "\t" + labelFim + ":\n"; 
         } 
         ;
-CMD_WHILE : _WHILE '(' E ')' _DO CMDS _END ; 
-CMD_DO_WHILE : _DO CMDS _WHILE '(' E ')' _END ;
+CMD_WHILE : _WHILE '(' E ')' _DO CMDS _END
+          {
+            string varTeste = criaTemp( "bool" );
+            string labelFim = criaLabel( "label_fim" );
+            string labelTeste = criaLabel( "label_teste" );
+          
+            $$.v = "";
+            $$.c = "\t" + labelTeste + ":\n" + $3.c + 
+            "\t" + varTeste + " = !" + $3.v + ";\n" + 
+            "\tif( " + varTeste + " ) goto " + labelFim +";\n" +
+            $6.c +
+            "\tgoto " + labelTeste + ";\n" + 
+            "\t" + labelFim + ":\n"; 
+          }
+          ; 
+CMD_DO_WHILE : _DO CMDS _WHILE '(' E ')' _END
+             {
+               string varTeste = criaTemp( "bool" );
+               string labelFim = criaLabel( "label_fim" );
+               string labelTeste = criaLabel( "label_teste" );
+          
+               $$.v = "";
+               $$.c = "\t" + labelTeste + ":\n" + $5.c + 
+               "\t" + varTeste + " = !" + $5.v + ";\n" + 
+               "\tif( " + varTeste + " ) goto " + labelFim +";\n" +
+               $3.c +
+               "\tgoto " + labelTeste + ";\n" + 
+               "\t" + labelFim + ":\n"; 
+            }
+            ; 
 
 /*============================
 Comando de chamada de Função:
