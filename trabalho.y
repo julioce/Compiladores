@@ -34,6 +34,7 @@ void yyerror( const char* st );
 void erroSemantico( string erro );
 void geraCodigoOperador(Atributos& ss, Atributos s1, string op, Atributos s3);
 void insereVar( string nome, string tipo );
+void removeVar( string nome );
 
 map< string, string > ts;
 
@@ -66,7 +67,7 @@ PROGRAMA : BLOCO_PRINCIPAL { cout << "#include <iostream>\n"
                                      "using namespace std;\n\n" << $1.c << "\n" << endl; }
          ; 
 BLOCO_PRINCIPAL : DECLARACOES_GLOBAIS _BEGIN CMDS _END
-                { $$.c = $1.c + geraCodigoDeclaracaoVarTemp() + "\nint main() {\n" + $3.c + "\treturn 0;\n}\n"; }
+                { $$.c = $1.c + geraCodigoDeclaracaoVarTemp() + "\nint main() {\n" + $3.c + "\treturn 0;\n}"; }
                 ; 
 DECLARACOES_GLOBAIS : VAR DECLARACOES_GLOBAIS { $$.c = $1.c + $2.c; }
                     | FUN DECLARACOES_GLOBAIS { $$.c = $1.c + $2.c; }
@@ -149,7 +150,7 @@ CMD_ATRIB : _ID _ATRIBUICAO E
             $1.t = buscaTipoVar( $1.v );
             $$.t = ""; 
             $$.v = "";
-
+            
             $$.c = $3.c;
 
             if( ($1.t == $3.t && $1.t != "string") || ($1.t == "double" && $3.t == "int") ){
@@ -165,6 +166,26 @@ CMD_ATRIB : _ID _ATRIBUICAO E
           | _ID '[' E ']' _ATRIBUICAO E  
           | _ID '[' E ']' '[' E ']' _ATRIBUICAO E  
           ; 
+          
+CMD_ATRIB_LOCAL : _ID _ATRIBUICAO _VALUE_INTEGER
+                {
+                  
+                  if( ts.find( $1.v ) == ts.end() ){
+                    
+                    $1.t = "int";
+                    $$.t = ""; 
+                    $$.v = "";
+                    
+                    $$.c = $3.c;
+                        
+                    string varTemp = criaTemp( $1.t );
+                    insereVar( $1.v, $1.t );
+                    $$.c += "\tint " + $1.v + ";\n";
+                    
+                  }
+                  $$.c += "\t" + $1.v + " = " + $3.v + ";\n";
+                }
+                ;
 
 /*============================
 Comandos de Saida:
@@ -173,7 +194,8 @@ CMD_SAIDA : _PRINT '(' E ')'
             {
               $$.v = "";
               $$.c = "\tputs("+ $3.v +");\n";
-            } ;
+            }
+            ;
 
 /*============================
 Comando de Controle:
@@ -185,8 +207,7 @@ CMD_IF_ELSE : _IF '(' E ')' _DO CMDS _END
               $$.v = "";
               $$.c = $3.c + 
                 "\t" + varTeste + " = !" + $3.v + ";\n" 
-                "\tif( " + varTeste + " ) goto " + 
-                labelFim + ";\n" +
+                "\tif( " + varTeste + " ) goto " + labelFim + ";\n" +
                 $6.c +
                 "\t" + labelFim +":\n"; 
  
@@ -199,8 +220,7 @@ CMD_IF_ELSE : _IF '(' E ')' _DO CMDS _END
               $$.v = "";
               $$.c = $3.c + 
                 "\t" + varTeste + " = !" + $3.v + ";\n" 
-                "\tif( " + varTeste + " ) goto " + 
-                labelElse +";\n" +
+                "\tif( " + varTeste + " ) goto " + labelElse +";\n" +
                 $6.c +
                 "\tgoto " + labelFim + ";\n\t" +
                 labelElse + ":\n" + 
@@ -212,7 +232,21 @@ CMD_IF_ELSE : _IF '(' E ')' _DO CMDS _END
 /*============================
 Comando de Iteração:
 ============================*/
-CMD_FOR : _FOR '(' CMD_ATRIB ';' E ';' E ')' _DO CMDS _END ;
+CMD_FOR : _FOR '(' CMD_ATRIB_LOCAL ';' E ')' _DO CMDS _END
+        {
+          string varTeste = criaTemp( "bool" );
+          string labelFim = criaLabel( "label_fim" );
+          string labelElse = criaLabel( "label_else" );
+          
+          $$.v = "";
+          $$.c = $3.c + "\t" + labelElse + ":\n" + $5.c + 
+          "\t" + varTeste + " = !" + $5.v + ";\n" + 
+          "\tif( " + varTeste + " ) goto " + labelFim +";\n" +
+          $8.c +
+          "\tgoto " + labelElse + ";\n" + 
+          "\t" + labelFim + ":\n"; 
+        } 
+        ;
 CMD_WHILE : _WHILE '(' E ')' _DO CMDS _END ; 
 CMD_DO_WHILE : _DO CMDS _WHILE '(' E ')' _END ;
 
@@ -266,6 +300,7 @@ VALUE : _VALUE_INTEGER
       | _VALUE_STRING
       | _TRUE
       | _FALSE
+      | _VALUE_NULL
       ;
 TIPOS : _INTEGER 
       | _DOUBLE 
@@ -477,6 +512,13 @@ void insereVar( string nome, string tipo ) {
     ts[nome] = tipo;
   else 
     erroSemantico( "Variável já declarada: " + nome ); 
+}
+
+void removeVar( string nome ) {
+  if( ts.find( nome ) == ts.end() ) 
+    ts[nome] = "NULL";
+  else 
+    erroSemantico( "Bug interno do Compilador ao remover a variável local: " + nome ); 
 }
 
 string buscaTipoVar( string nome ) {

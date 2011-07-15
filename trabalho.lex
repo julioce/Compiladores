@@ -50,7 +50,7 @@ PRINT         [Pp][Rr][Ii][Nn][Tt]
 
 {TRUE}          { yylval = Atributos( "1", "", "bool" ); return _TRUE; }
 {FALSE}         { yylval = Atributos( "0", "", "bool" ); return _FALSE; }
-{VALUE_NULL}    { return _VALUE_NULL; }
+{VALUE_NULL}    { yylval = Atributos( "null", "", "" ); return _TRUE; }
 {VALUE_INTEGER} { yylval = Atributos( yytext, "", "int" ); return _VALUE_INTEGER; }
 {VALUE_DOUBLE}  { yylval = Atributos( yytext, "", "double" ); return _VALUE_DOUBLE; }
 {VALUE_CHAR}    { yylval = Atributos( yytext, "", "char" ); return _VALUE_CHAR; }
