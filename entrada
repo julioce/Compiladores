@@ -4,6 +4,7 @@ var
 	buleano : boolean
 	estringue_inicio, estringue_fim, estringue_final, estringue_status : string
 	xar : char
+	arrei : array[2] of string
 end
 
 
@@ -17,14 +18,14 @@ begin
 	estringue_fim = "... Final"
 	xar = '!'
 
-	while ( intero < 10 ) do
+	while ( intero < 5 ) do
 		print("Variável intero=")
 		print(intero)
 		print("!\n")
 		intero = intero + 1
 	end
 	
-	for ( i=0 ; i<10 ) do
+	for ( i=0 ; i<5 ) do
 		print("Variável i=")
 		print(i)
 		print("!\n")

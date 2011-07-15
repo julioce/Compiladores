@@ -91,14 +91,20 @@ DECLARACAO_VAR : LISTA_IDS ':' TIPOS
     
                  for( size_t pos = lista.find( "$" ); pos != string::npos; pos = lista.find( "$" ) ) { 
                    string variavel = lista.substr( 0, pos );
+                   
                    if(tipo == "string"){
                      $$.c += "char " + variavel + "[256];\n"; 
+                     insereVar( variavel, tipo );
                    }else if(tipo == "bool"){
-                     $$.c += "int " + variavel + ";\n"; 
+                     $$.c += "int " + variavel + ";\n";
+                     insereVar( variavel, tipo ); 
+                   }else if(tipo == "array"){
+                     $$.c += $3.c + " " + variavel + $3.v + ";\n"; 
+                     insereVar( variavel, $3.c );
                    }else{
-                     $$.c += tipo + " " + variavel + ";\n"; 
+                     $$.c += tipo + " " + variavel + ";\n";
+                     insereVar( variavel, tipo ); 
                    }
-                   insereVar( variavel, tipo );
                    lista = lista.substr( pos+1 );
                  }
                }
@@ -156,16 +162,36 @@ CMD_ATRIB : _ID _ATRIBUICAO E
 
             if( ($1.t == $3.t && $1.t != "string") || ($1.t == "double" && $3.t == "int") ){
               $$.c += "\t" + $3.c + $1.v + " = " + $3.v + ";\n";
+              
             }else if( $1.t == "string" && $3.t == "string" ){
               $$.c += "\tstrncpy(" + $1.v + ", " + $3.v + ", 256);\n";
+              
             }else if( $1.t == "string" && $3.t == "char" ){
               $$.c += "\t" + $3.c + $1.v + "[0] = " + $3.v + ";\n" + $1.v + "[1] = 0;\n";
+              
             }else{
               erroSemantico( "Não é possível atribuir " + $3.t + " à " + $1.t );
+              
             }
           }
-          | _ID '[' E ']' _ATRIBUICAO E  
-          | _ID '[' E ']' '[' E ']' _ATRIBUICAO E  
+          | _ID '[' _VALUE_INTEGER ']' _ATRIBUICAO E 
+          {
+            $1.t = buscaTipoVar( $1.v );
+            $$.t = ""; 
+            $$.v = "";
+            
+            $$.c = $6.c;
+            if( $1.t == $6.t ){
+              $$.c += "\t" + $6.c + $1.v + "[" + $3.v + "] = " + $6.v + ";\n";
+              
+            }else if( $1.t == "string" && $6.t == "char" ){
+              $$.c += "\t" + $6.c + $1.v + "[" + $3.v + "] = " + $3.v + ";\n" + $1.v + "[1] = 0;\n";
+              
+            }else{
+              erroSemantico( "Não é possível atribuir " + $6.t + " à " + $1.t );
+            }
+          } 
+          | _ID '[' _VALUE_INTEGER ']' '[' _VALUE_INTEGER ']' _ATRIBUICAO E  
           ; 
           
 CMD_ATRIB_LOCAL : _ID _ATRIBUICAO _VALUE_INTEGER
@@ -349,31 +375,15 @@ TIPOS : _INTEGER
       | _CHAR 
       | _STRING 
       | _BOOLEAN 
-      | _ARRAY TIPO_ARRAY _OF _INTEGER
-      | _ARRAY TIPO_ARRAY _OF _DOUBLE
-      | _ARRAY TIPO_ARRAY _OF _CHAR
-      | _ARRAY TIPO_ARRAY _OF _STRING
-      | _ARRAY TIPO_ARRAY _OF _BOOLEAN
-      | _ARRAY TIPO_ARRAY TIPO_ARRAY _OF _INTEGER
-      | _ARRAY TIPO_ARRAY TIPO_ARRAY _OF _DOUBLE
-      | _ARRAY TIPO_ARRAY TIPO_ARRAY _OF _CHAR
-      | _ARRAY TIPO_ARRAY TIPO_ARRAY _OF _STRING
-      | _ARRAY TIPO_ARRAY TIPO_ARRAY _OF _BOOLEAN
+      | _ARRAY '[' _VALUE_INTEGER ']' _OF _INTEGER { $$.t = "array"; $$.v = "[" + $3.v + "]"; $$.c = "int"; }
+      | _ARRAY '[' _VALUE_INTEGER ']' _OF _DOUBLE  { $$.t = "array"; $$.v = "[" + $3.v + "]"; $$.c = "double"; }
+      | _ARRAY '[' _VALUE_INTEGER ']' _OF _CHAR    { $$.t = "array"; $$.v = "[" + $3.v + "]"; $$.c = "char"; }
+      | _ARRAY '[' _VALUE_INTEGER ']' _OF _STRING  { $$.t = "array"; $$.v = "[" + $3.v + "]"; $$.c = "char"; }
+      | _ARRAY '[' _VALUE_INTEGER ']' '[' _VALUE_INTEGER ']' _OF _INTEGER { $$.t = "array"; $$.v = "[" + $3.v + "]" + "[" + $6.v + "]"; $$.c = "int"; }
+      | _ARRAY '[' _VALUE_INTEGER ']' '[' _VALUE_INTEGER ']' _OF _DOUBLE  { $$.t = "array"; $$.v = "[" + $3.v + "]" + "[" + $6.v + "]"; $$.c = "double"; }
+      | _ARRAY '[' _VALUE_INTEGER ']' '[' _VALUE_INTEGER ']' _OF _CHAR    { $$.t = "array"; $$.v = "[" + $3.v + "]" + "[" + $6.v + "]"; $$.c = "char"; }
+      | _ARRAY '[' _VALUE_INTEGER ']' '[' _VALUE_INTEGER ']' _OF _STRING  { $$.t = "array"; $$.v = "[" + $3.v + "]" + "[" + $6.v + "]"; $$.c = "char"; }
       ;
-TIPO_ARRAY : ARRAY_INTEGER
-           | ARRAY_DOUBLE
-           | ARRAY_CHAR
-           | ARRAY_STRING
-           | ARRAY_BOOLEAN
-           ;
-ARRAY_INTEGER : '[' _VALUE_INTEGER ':' _VALUE_INTEGER ']';
-ARRAY_DOUBLE :  '[' _VALUE_DOUBLE  ':' _VALUE_DOUBLE  ']';
-ARRAY_CHAR :    '['  _VALUE_CHAR   ':'  _VALUE_CHAR   ']';
-ARRAY_STRING :  '[' _VALUE_STRING  ':'  _VALUE_STRING ']';
-ARRAY_BOOLEAN : '[' _TRUE ':' _TRUE ']';
-ARRAY_BOOLEAN : '[' _TRUE ':' _FALSE ']';
-ARRAY_BOOLEAN : '[' _FALSE ':' _TRUE ']';
-ARRAY_BOOLEAN : '[' _FALSE ':' _FALSE ']';
 
 %%
 #include "lex.yy.c"
