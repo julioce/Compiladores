@@ -10,13 +10,35 @@ end
 begin
 	
 	for ( i=0 ; i<10 ) do
+		print("Variável i=")
+		print(i)
+		print("!\n")
 		i=i+1
-		print("Ola!")
 	end
 	
-	for ( i=2 ; i<10 ) do
-		i=i+1
-		print("Ola!")
+	inteiro = 1
+	dobou_1 = 9.99
+	dobou_2 = 9.99
+	buleano = True
+	estringue_inicio = "Início ..."
+	estringue_fim = "... Final"
+	xar = '!'
+
+	if( inteiro and buleano ) do
+		print("Estou no If\n")
+
+		if( dobou_1 == dobou_2 ) do
+			estringue_status = "dobou_1 = " + dobou_1 + " e é dobou_2 = " + dobou_2 + ". Logo eles são iguais!"
+		else
+			if( dobou_1 > dobou_2 ) do
+				estringue_status = "dobou_1 = " + dobou_1 + " e é maior que dobou_2!"
+			else
+				estringue_status = "dobou_2 = " + dobou_2 + " e é maior que dobou_1!"
+			end
+		end
+		print(estringue_status)
+	else
+		print("Estou no Else\n")
 	end
 
 end

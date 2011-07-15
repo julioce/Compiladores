@@ -169,7 +169,6 @@ CMD_ATRIB : _ID _ATRIBUICAO E
           
 CMD_ATRIB_LOCAL : _ID _ATRIBUICAO _VALUE_INTEGER
                 {
-                  
                   if( ts.find( $1.v ) == ts.end() ){
                     
                     $1.t = "int";
@@ -193,7 +192,15 @@ Comandos de Saida:
 CMD_SAIDA : _PRINT '(' E ')' 
             {
               $$.v = "";
-              $$.c = "\tputs("+ $3.v +");\n";
+              if( $3.t == "int" ){
+              	$$.c += "\tprintf(\"%i\", " + $3.v + ");\n";
+              }else if( $3.t == "double" ){
+              	$$.c += "\tprintf(\"%i\", " + $3.v + ");\n";
+              }else if( $3.t == "string" ){
+              	$$.c += "\tprintf(\"%s\", " + $3.v + ");\n";
+              }else{
+              	$$.c += "\tprintf(" + $3.v + ");\n";
+              }
             }
             ;
 
