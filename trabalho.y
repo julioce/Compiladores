@@ -403,6 +403,10 @@ TIPOS : _INTEGER
       ;
 
 %%
+int n_label = 0;
+string delcaracaoVarLocal = "";
+int nlinha = 1;
+
 #include "lex.yy.c"
 
 struct Resultado {
@@ -504,14 +508,10 @@ struct Temporarias {
   int tipo_bool;
 } n_temp = { 0, 0, 0, 0, 0 };
 
-int n_label = 0;
-string delcaracaoVarLocal = "";
-
 void geraCodigoOperador( Atributos& ss, Atributos s1, string op, Atributos s3 ) {
   ss.t = tipoOperacao( op, s1.t, s3.t ); 
   ss.v = criaTemp( ss.t );
   string strA = s1.v, strB = s3.v, conversoes = "";
-  
   
   if( (s1.t == "int" && s3.t == "int") || 
       (s1.t == "int" && s3.t == "double") || 
@@ -567,13 +567,15 @@ void geraCodigoOperador( Atributos& ss, Atributos s1, string op, Atributos s3 ) 
 }
 
 void yyerror( const char* st ){
-  cout << "Erro sintático: " << st << endl
-       << "Erro anterior ao token: " << yytext << endl;
+  cout << "Erro sintático" << endl
+       << "Linha: " << nlinha << endl
+       << "Próximo ao token: " << yytext << endl;
 }
 
 void erroSemantico( string erro ){
-  cout << "Erro semântico: " << erro << endl;
-  cout << "Erro anterior ao token: " << yytext << endl;
+  cout << "Erro semântico - " << erro << endl
+       << "Linha: " << nlinha << endl
+       << "Próximo ao token: " << yytext << endl;
   exit(0);
 }
 

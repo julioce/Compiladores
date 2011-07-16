@@ -4,7 +4,8 @@
   Débora Ribeiro Nobre - 107390677
 */
 
-DELIM         [\t\n ]
+DELIM         [\t ]
+LINHA         [\n]
 NUMERO        [0-9]
 LETRA         [A-Za-z_]
 
@@ -46,7 +47,9 @@ READ          [Rr][Ee][Aa][Dd]
  
 %%
 
-{DELIM}   {}
+{DELIM}         {}
+
+{LINHA}         { nlinha++; }
 
 {TRUE}          { yylval = Atributos( "1", "", "bool" ); return _TRUE; }
 {FALSE}         { yylval = Atributos( "0", "", "bool" ); return _FALSE; }
