@@ -26,10 +26,12 @@ int toInt( string n );
 string toStr( int n );
 string criaTemp( string tipo );
 string criaLabel( string prefixo );
-string geraCodigoDeclaracaoVarTemp();
 string buscaTipoVar( string nome );
 string tipoOperacao( string opr, string tipoA, string tipoB );
+string geraCodigoDeclaracaoVarTemp();
+string geraCodigoDeclaracaoVarLocal();
 
+void adicionaCodigoDeclaracaoVarLocal( string codigo );
 void yyerror( const char* st );
 void erroSemantico( string erro );
 void geraCodigoOperador(Atributos& ss, Atributos s1, string op, Atributos s3);
@@ -43,7 +45,7 @@ map< string, string > ts;
 
 %token _VALUE_NULL _TRUE _FALSE _VALUE_INTEGER _VALUE_DOUBLE _VALUE_CHAR _VALUE_STRING
 %token _BEGIN _DO _END
-%token _VAR _INTEGER _DOUBLE _CHAR _STRING _BOOLEAN _FUNCTION _ARRAY _OF
+%token _VAR _INTEGER _DOUBLE _CHAR _STRING _BOOLEAN _FUNCTION _ARRAY 
 %token _AND _OR _NOT
 %token _IF _ELSE _FOR _WHILE _PRINT _READ
 %token _ATRIBUICAO _MENORIGUAL _MAIORIGUAL _IGUAL _DIFERENTE 
@@ -67,7 +69,7 @@ PROGRAMA : BLOCO_PRINCIPAL { cout << "#include <iostream>\n"
                                      "using namespace std;\n\n" << $1.c << "\n" << endl; }
          ; 
 BLOCO_PRINCIPAL : DECLARACOES_GLOBAIS _BEGIN CMDS _END
-                { $$.c = $1.c + geraCodigoDeclaracaoVarTemp() + "\nint main() {\n" + $3.c + "\treturn 0;\n}"; }
+                { $$.c = $1.c + geraCodigoDeclaracaoVarTemp() + geraCodigoDeclaracaoVarLocal() + "\nint main() {\n" + $3.c + "\treturn 0;\n}"; }
                 ; 
 DECLARACOES_GLOBAIS : VAR DECLARACOES_GLOBAIS { $$.c = $1.c + $2.c; }
                     | FUN DECLARACOES_GLOBAIS { $$.c = $1.c + $2.c; }
@@ -192,6 +194,22 @@ CMD_ATRIB : _ID _ATRIBUICAO E
             }
           } 
           | _ID '[' _VALUE_INTEGER ']' '[' _VALUE_INTEGER ']' _ATRIBUICAO E  
+          {
+            $1.t = buscaTipoVar( $1.v );
+            $$.t = ""; 
+            $$.v = "";
+            
+            $$.c = $9.c;
+            if( $1.t == $9.t ){
+              $$.c += "\t" + $9.c + $1.v + "[" + $3.v + "][" + $6.v + "] = " + $9.v + ";\n";
+              
+            }else if( $1.t == "string" && $9.t == "char" ){
+              $$.c += "\t" + $9.c + $1.v + "[" + $3.v + "][" + $6.v + "] = " + $3.v + ";\n" + $1.v + "[1] = 0;\n";
+              
+            }else{
+              erroSemantico( "Não é possível atribuir " + $9.t + " à " + $1.t );
+            }
+          }
           ; 
           
 CMD_ATRIB_LOCAL : _ID _ATRIBUICAO _VALUE_INTEGER
@@ -205,8 +223,8 @@ CMD_ATRIB_LOCAL : _ID _ATRIBUICAO _VALUE_INTEGER
                     $$.c = $3.c;
                         
                     string varTemp = criaTemp( $1.t );
+                    adicionaCodigoDeclaracaoVarLocal( "int " + $1.v + ";\n" );
                     insereVar( $1.v, $1.t );
-                    $$.c += "\tint " + $1.v + ";\n";
                     
                   }
                   $$.c += "\t" + $1.v + " = " + $3.v + ";\n";
@@ -375,14 +393,14 @@ TIPOS : _INTEGER
       | _CHAR 
       | _STRING 
       | _BOOLEAN 
-      | _ARRAY '[' _VALUE_INTEGER ']' _OF _INTEGER { $$.t = "array"; $$.v = "[" + $3.v + "]"; $$.c = "int"; }
-      | _ARRAY '[' _VALUE_INTEGER ']' _OF _DOUBLE  { $$.t = "array"; $$.v = "[" + $3.v + "]"; $$.c = "double"; }
-      | _ARRAY '[' _VALUE_INTEGER ']' _OF _CHAR    { $$.t = "array"; $$.v = "[" + $3.v + "]"; $$.c = "char"; }
-      | _ARRAY '[' _VALUE_INTEGER ']' _OF _STRING  { $$.t = "array"; $$.v = "[" + $3.v + "]"; $$.c = "char"; }
-      | _ARRAY '[' _VALUE_INTEGER ']' '[' _VALUE_INTEGER ']' _OF _INTEGER { $$.t = "array"; $$.v = "[" + $3.v + "]" + "[" + $6.v + "]"; $$.c = "int"; }
-      | _ARRAY '[' _VALUE_INTEGER ']' '[' _VALUE_INTEGER ']' _OF _DOUBLE  { $$.t = "array"; $$.v = "[" + $3.v + "]" + "[" + $6.v + "]"; $$.c = "double"; }
-      | _ARRAY '[' _VALUE_INTEGER ']' '[' _VALUE_INTEGER ']' _OF _CHAR    { $$.t = "array"; $$.v = "[" + $3.v + "]" + "[" + $6.v + "]"; $$.c = "char"; }
-      | _ARRAY '[' _VALUE_INTEGER ']' '[' _VALUE_INTEGER ']' _OF _STRING  { $$.t = "array"; $$.v = "[" + $3.v + "]" + "[" + $6.v + "]"; $$.c = "char"; }
+      | _ARRAY '[' _VALUE_INTEGER ']'  _INTEGER { $$.t = "array"; $$.v = "[" + $3.v + "]"; $$.c = "int"; }
+      | _ARRAY '[' _VALUE_INTEGER ']'  _DOUBLE  { $$.t = "array"; $$.v = "[" + $3.v + "]"; $$.c = "double"; }
+      | _ARRAY '[' _VALUE_INTEGER ']'  _CHAR    { $$.t = "array"; $$.v = "[" + $3.v + "]"; $$.c = "char"; }
+      | _ARRAY '[' _VALUE_INTEGER ']'  _STRING  { $$.t = "array"; $$.v = "[" + $3.v + "]"; $$.c = "char"; }
+      | _ARRAY '[' _VALUE_INTEGER ']' '[' _VALUE_INTEGER ']' _INTEGER { $$.t = "array"; $$.v = "[" + $3.v + "][" + $6.v + "]"; $$.c = "int"; }
+      | _ARRAY '[' _VALUE_INTEGER ']' '[' _VALUE_INTEGER ']' _DOUBLE  { $$.t = "array"; $$.v = "[" + $3.v + "][" + $6.v + "]"; $$.c = "double"; }
+      | _ARRAY '[' _VALUE_INTEGER ']' '[' _VALUE_INTEGER ']' _CHAR    { $$.t = "array"; $$.v = "[" + $3.v + "][" + $6.v + "]"; $$.c = "char"; }
+      | _ARRAY '[' _VALUE_INTEGER ']' '[' _VALUE_INTEGER ']' _STRING  { $$.t = "array"; $$.v = "[" + $3.v + "][" + $6.v + "]"; $$.c = "char"; }
       ;
 
 %%
@@ -488,6 +506,7 @@ struct Temporarias {
 } n_temp = { 0, 0, 0, 0, 0 };
 
 int n_label = 0;
+string delcaracaoVarLocal = "";
 
 void geraCodigoOperador( Atributos& ss, Atributos s1, string op, Atributos s3 ) {
   ss.t = tipoOperacao( op, s1.t, s3.t ); 
@@ -628,6 +647,15 @@ string geraCodigoDeclaracaoVarTemp() {
 
   return aux;
 }
+
+void adicionaCodigoDeclaracaoVarLocal( string codigo ) {
+  delcaracaoVarLocal += codigo;
+}
+
+string geraCodigoDeclaracaoVarLocal() {
+  return delcaracaoVarLocal;
+}
+   
 
 string tipoOperacao( string opr, string tipoA, string tipoB ) {
   for( int i = 0; resultado[i].opr != ""; i++ ) {

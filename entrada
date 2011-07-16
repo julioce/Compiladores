@@ -4,7 +4,7 @@ var
 	buleano : boolean
 	estringue_inicio, estringue_fim, estringue_final, estringue_status : string
 	xar : char
-	arrei : array[2] of string
+	arrei : array[2] string
 end
 
 
