@@ -68,7 +68,7 @@ PROGRAMA : BLOCO_PRINCIPAL { cout << "#include <iostream>\n"
                                      "using namespace std;\n\n" << $1.c << "\n" << endl; }
          ; 
 BLOCO_PRINCIPAL : DECLARACOES_GLOBAIS _BEGIN CMDS _END
-                { $$.c = $1.c + geraCodigoDeclaracaoVarTemp() + geraCodigoDeclaracaoVarLocal() + "\nint main() {\n" + $3.c + "\treturn 0;\n}"; }
+                { $$.c = $1.c + geraCodigoDeclaracaoVarTemp() + "\nint main() {\n" + geraCodigoDeclaracaoVarLocal() + $3.c + "\treturn 0;\n}"; }
                 ; 
 DECLARACOES_GLOBAIS : VAR DECLARACOES_GLOBAIS { $$.c = $1.c + $2.c; }
                     | FUN DECLARACOES_GLOBAIS { $$.c = $1.c + $2.c; }
@@ -118,8 +118,7 @@ LISTA_IDS : _ID ',' LISTA_IDS { $$.v = $1.v + "$" + $3.v; }
 /*==============================
 Bloco de declarações de funções:
 ==============================*/
-FUN : _FUNCTION _ID ':' TIPOS CORPO 
-    | _FUNCTION _ID '(' PARAMS ')' ':' TIPOS CORPO
+FUN : _FUNCTION _ID ':' CORPO 
     | _FUNCTION _ID '(' PARAMS ')' CORPO
     ; 
 CORPO : VAR CMDS _END 
@@ -594,7 +593,7 @@ string buscaTipoVar( string nome ) {
 }
 
 void adicionaCodigoDeclaracaoVarLocal( string codigo ) {
-  delcaracaoVarLocal += codigo;
+  delcaracaoVarLocal += "\t" + codigo;
 }
 
 string geraCodigoDeclaracaoVarLocal() {

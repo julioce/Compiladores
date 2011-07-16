@@ -8,6 +8,7 @@ DELIM         [\t ]
 LINHA         [\n]
 NUMERO        [0-9]
 LETRA         [A-Za-z_]
+COMENTARIOS   "##".*
 
 ASPAS         "\""
 PLICS         "\'"
@@ -48,6 +49,7 @@ READ          [Rr][Ee][Aa][Dd]
 %%
 
 {DELIM}         {}
+{COMENTARIOS}   {}
 
 {LINHA}         { nlinha++; }
 

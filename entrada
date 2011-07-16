@@ -1,4 +1,5 @@
 var
+	## Declaração de variáveis
 	intero : integer
 	dobou_1, dobou_2 : double
 	buleano : boolean
@@ -7,9 +8,12 @@ var
 	arrei : array[2] string
 end
 
+function soma ( dobou1, dobou2 : double )
+end
+
 
 begin
-    
+    ## Atrinbuição de variáveis
 	intero = 1
 	dobou_1 = 9.99
 	dobou_2 = 9.99
@@ -18,6 +22,7 @@ begin
 	estringue_fim = "... Final"
 	xar = '!'
 
+	## Teste de while
 	while ( intero < 5 ) do
 		print("Variável intero=")
 		print(intero)
@@ -25,6 +30,7 @@ begin
 		intero = intero + 1
 	end
 	
+	## Teste de for
 	for ( i=0 ; i<5 ) do
 		print("Variável i=")
 		print(i)
@@ -32,19 +38,22 @@ begin
 		i=i+1
 	end
 
+	## Teste de if com operadores lógicos
 	if( intero and buleano ) do
 		print("Estou no If\n")
 
-		if( dobou_1 == dobou_2 ) do
-			print("dobou_1 = " + dobou_1 + " e é dobou_2 = " + dobou_2 + ". Logo eles são iguais!")
+		## If dentro de outro if
+		if( dobou_1 == dobou_2 ) do 
+			print("dobou_1 = " + dobou_1 + " e é dobou_2 = " + dobou_2 + ". Logo eles são iguais!") ## if concatenado strings e doubles.
 		else
-			if( dobou_1 > dobou_2 ) do
+			if( dobou_1 > dobou_2 ) do ## if entre variáveis
 				print("dobou_1 = " + dobou_1 + " e é maior que dobou_2!")
 			else
 				print("dobou_2 = " + dobou_2 + " e é maior que dobou_1!")
 			end
 		end
 	else
+		## Print de string
 		print("Estou no Else\n")
 	end
 
