@@ -36,15 +36,14 @@ begin
 		print("Estou no If\n")
 
 		if( dobou_1 == dobou_2 ) do
-			estringue_status = "dobou_1 = " + dobou_1 + " e é dobou_2 = " + dobou_2 + ". Logo eles são iguais!"
+			print("dobou_1 = " + dobou_1 + " e é dobou_2 = " + dobou_2 + ". Logo eles são iguais!")
 		else
 			if( dobou_1 > dobou_2 ) do
-				estringue_status = "dobou_1 = " + dobou_1 + " e é maior que dobou_2!"
+				print("dobou_1 = " + dobou_1 + " e é maior que dobou_2!")
 			else
-				estringue_status = "dobou_2 = " + dobou_2 + " e é maior que dobou_1!"
+				print("dobou_2 = " + dobou_2 + " e é maior que dobou_1!")
 			end
 		end
-		print(estringue_status)
 	else
 		print("Estou no Else\n")
 	end

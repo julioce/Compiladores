@@ -36,7 +36,6 @@ void yyerror( const char* st );
 void erroSemantico( string erro );
 void geraCodigoOperador(Atributos& ss, Atributos s1, string op, Atributos s3);
 void insereVar( string nome, string tipo );
-void removeVar( string nome );
 
 map< string, string > ts;
 
@@ -240,11 +239,11 @@ CMD_SAIDA : _PRINT '(' E ')'
               if( $3.t == "int" ){
               	$$.c += "\tprintf(\"%i\", " + $3.v + ");\n";
               }else if( $3.t == "double" ){
-              	$$.c += "\tprintf(\"%i\", " + $3.v + ");\n";
+              	$$.c += "\tprintf(\"%f\", " + $3.v + ");\n";
               }else if( $3.t == "string" ){
-              	$$.c += "\tprintf(\"%s\", " + $3.v + ");\n";
-              }else{
-              	$$.c += "\tprintf(" + $3.v + ");\n";
+              	$$.c += $3.c + "\tprintf(\"%s\", " + $3.v + ");\n";
+              }else if( $3.t == "char" ){
+              	$$.c += $3.c + "\tprintf(\"%c\", " + $3.v + ");\n";
               }
             }
             ;
@@ -369,7 +368,7 @@ F : _ID
     $$.v = $1.v;
     $$.t = buscaTipoVar( $1.v );
   }
-  | VALUE
+  | VALUE { $$ = $1; }
   | '(' E ')' { $$ = $2; }
   | _NOT F { $$.v = $1.v + $2.v; }
   | '-' F { $$.v = $1.v + $2.v; }
@@ -585,18 +584,19 @@ void insereVar( string nome, string tipo ) {
     erroSemantico( "Variável já declarada: " + nome ); 
 }
 
-void removeVar( string nome ) {
-  if( ts.find( nome ) == ts.end() ) 
-    ts[nome] = "NULL";
-  else 
-    erroSemantico( "Bug interno do Compilador ao remover a variável local: " + nome ); 
-}
-
 string buscaTipoVar( string nome ) {
   if( ts.find( nome ) == ts.end() ) 
     erroSemantico( "Variável não declarada: " + nome );
 
   return ts[nome];
+}
+
+void adicionaCodigoDeclaracaoVarLocal( string codigo ) {
+  delcaracaoVarLocal += codigo;
+}
+
+string geraCodigoDeclaracaoVarLocal() {
+  return delcaracaoVarLocal;
 }
 
 string toStr( int n ) {
@@ -646,14 +646,6 @@ string geraCodigoDeclaracaoVarTemp() {
     aux += "char _t_string_" + toStr( i ) + "[256];\n";
 
   return aux;
-}
-
-void adicionaCodigoDeclaracaoVarLocal( string codigo ) {
-  delcaracaoVarLocal += codigo;
-}
-
-string geraCodigoDeclaracaoVarLocal() {
-  return delcaracaoVarLocal;
 }
    
 
