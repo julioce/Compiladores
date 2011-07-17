@@ -30,8 +30,12 @@ string buscaTipoVar( string nome );
 string tipoOperacao( string opr, string tipoA, string tipoB );
 string geraCodigoDeclaracaoVarTemp();
 string geraCodigoDeclaracaoVarLocal();
+string geraCodigoPrototipoFuncao();
+string geraCodigoFuncao();
 
-void adicionaCodigoDeclaracaoVarLocal( string codigo );
+void adicionaCodigoDeclaracaoVarLocal( string varLocal );
+void adicionaCodigoPrototipoFuncao( string prototipo );
+void adicionaCodigoFuncao( string funcao );
 void yyerror( const char* st );
 void erroSemantico( string erro );
 void geraCodigoOperador(Atributos& ss, Atributos s1, string op, Atributos s3);
@@ -44,7 +48,7 @@ map< string, string > ts;
 
 %token _VALUE_NULL _TRUE _FALSE _VALUE_INTEGER _VALUE_DOUBLE _VALUE_CHAR _VALUE_STRING
 %token _BEGIN _DO _END
-%token _VAR _INTEGER _DOUBLE _CHAR _STRING _BOOLEAN _FUNCTION _ARRAY 
+%token _VAR _INTEGER _DOUBLE _CHAR _STRING _BOOLEAN _ARRAY _FUNCTION _RETURN 
 %token _AND _OR _NOT
 %token _IF _ELSE _FOR _WHILE _PRINT _READ
 %token _ATRIBUICAO _MENORIGUAL _MAIORIGUAL _IGUAL _DIFERENTE 
@@ -68,10 +72,10 @@ PROGRAMA : BLOCO_PRINCIPAL { cout << "#include <iostream>\n"
                                      "using namespace std;\n\n" << $1.c << "\n" << endl; }
          ; 
 BLOCO_PRINCIPAL : DECLARACOES_GLOBAIS _BEGIN CMDS _END
-                { $$.c = $1.c + geraCodigoDeclaracaoVarTemp() + "\nint main() {\n" + geraCodigoDeclaracaoVarLocal() + $3.c + "\treturn 0;\n}"; }
+                { $$.c = $1.c + "\n" + geraCodigoDeclaracaoVarTemp() + geraCodigoPrototipoFuncao() + geraCodigoFuncao() + "\nint main() {\n" + geraCodigoDeclaracaoVarLocal() + "\n" + $3.c + "\treturn 0;\n}"; }
                 ; 
 DECLARACOES_GLOBAIS : VAR DECLARACOES_GLOBAIS { $$.c = $1.c + $2.c; }
-                    | FUN DECLARACOES_GLOBAIS { $$.c = $1.c + $2.c; }
+                    | FUN DECLARACOES_GLOBAIS { $$.c = $1.c; }
                     | { $$.v = ""; $$.c = ""; }
                     ; 
 
@@ -118,19 +122,80 @@ LISTA_IDS : _ID ',' LISTA_IDS { $$.v = $1.v + "$" + $3.v; }
 /*==============================
 Bloco de declarações de funções:
 ==============================*/
-FUN : _FUNCTION _ID ':' CORPO 
-    | _FUNCTION _ID '(' PARAMS ')' CORPO
+FUN : _FUNCTION _ID "()" TIPOS CORPO 
+    {
+      if ( $4.t == "string" ) {
+      	$4.t = "char";
+      }
+      adicionaCodigoPrototipoFuncao( "\n" + $4.t + " " + $2.v + "();" );
+      adicionaCodigoFuncao( "\n" + $4.t + " " + $2.v + "(){\n" + $5.c + "}\n" );
+    }
+    | _FUNCTION _ID '(' PARAMS ')' TIPOS CORPO
+    {
+      if ( $6.t == "string" ) {
+      	$6.t = "char";
+      }
+      adicionaCodigoPrototipoFuncao( "\n" + $6.t + " " + $2.v + "( " + $4.c + " );");
+      adicionaCodigoFuncao( "\n" + $6.t + " " + $2.v + "( " + $4.c + " ){\n" + $7.c + "}\n" );
+    }
     ; 
-CORPO : VAR CMDS _END 
-      | CMDS _END 
+CORPO : VAR CMDS _END { $$.c = "\t" + $1.c + $2.c; }
+      | CMDS _END { $$.c = $1.c; }
       ; 
-PARAMS : DECLARACAO_VAR ',' PARAMS
-       | DECLARACAO_VAR
-       ; 
-LISTA_E : E ',' LISTA_E
-        | E
-        ;
+PARAMS : _ID ':' TIPOS ',' PARAMS
+       {
+       	 insereVar( $1.v, $3.t ); 
+       	 if ( $3.t == "string" ) {
+      	   $$.c += "char " + $1.v + "[256], " + $5.c;
+         }else{
+           $$.c += $3.t + " " + $1.v + ", " + $5.c;
+         }
+         
+       }
+       | _ID ':' TIPOS 
+       {
+       	 insereVar( $1.v, $3.t );
+       	 if ( $3.t == "string" ) {
+      	   $$.c += "char " + $1.v + "[256]";
+         }else{
+           $$.c += $3.t + " " + $1.v;
+         }
+         
+       }
+       ;
 
+
+/*============================
+Comando de chamada de Função:
+============================*/
+CMD_FUNCTION : _ID "()"
+             {
+               $$.t = buscaTipoVar( $1.v ); 
+               $$.v = $1.v;
+               $$.c = $1.c;
+             }
+             | _ID '(' LISTA_E ')'
+             {
+               $$.t = $3.t; 
+               $$.v = $1.v;
+               $$.c = $3.c;
+             }
+             ;
+             
+LISTA_E : E ',' LISTA_E
+        {
+          $$.t = $1.t; 
+          $$.v = $1.v;
+          $$.c = $1.v + ", " + $3.c;
+        }
+        | E
+        {
+          $$.t = $1.t; 
+          $$.v = $1.c;
+          $$.c = $1.v;
+        }
+        ;
+        
 
 /*============================
 Bloco de Comandos e operações:
@@ -138,7 +203,7 @@ Bloco de Comandos e operações:
 CMDS : CMDS CMD { $$.v = ""; $$.c = $1.c + $2.c; }
      | { $$.v = ""; $$.c = ""; }
      ; 
-CMD : _DO CMDS _END { $$.v = ""; $$.c = $1.c + $2.c + $3.c; }
+CMD : _DO CMDS _END { $$.v = ""; $$.c = $2.c; }
     | CMD_ATRIB 
     | CMD_SAIDA
     | CMD_ENTRADA
@@ -147,6 +212,14 @@ CMD : _DO CMDS _END { $$.v = ""; $$.c = $1.c + $2.c + $3.c; }
     | CMD_WHILE
     | CMD_DO_WHILE
     | CMD_FUNCTION
+    | _RETURN E 
+    {
+      if ($2.t == "string") { 
+        $$.c = "\treturn " + $2.v + "[256];\n";
+      }else{
+      	$$.c = "\treturn " + $2.v + ";\n";
+      }
+    }
     ; 
 
 /*============================
@@ -206,6 +279,30 @@ CMD_ATRIB : _ID _ATRIBUICAO E
               
             }else{
               erroSemantico( "Não é possível atribuir " + $9.t + " à " + $1.t );
+            }
+          }
+          | _ID _ATRIBUICAO CMD_FUNCTION
+          {
+            $1.t = buscaTipoVar( $1.v );
+            $$.t = ""; 
+            $$.v = "";
+            
+            $$.c = $3.c;
+
+            if( ($1.t == $3.t && $1.t != "string") || ($1.t == "double" && $3.t == "int") ){
+              string varTemp = criaTemp( $3.t );
+              $$.c = "\t" + varTemp + " = " + $3.v + "( " + $3.c + " );\n";
+              $$.c += "\t" + $1.v + " = " + varTemp + ";";
+              
+            }else if( $1.t == "string" && $3.t == "string" ){
+              $$.c += "\tstrncpy(" + $1.v + ", " + $3.v + ", 256);\n";
+              
+            }else if( $1.t == "string" && $3.t == "char" ){
+              $$.c += "\t" + $3.c + $1.v + "[0] = " + $3.v + ";\n" + $1.v + "[1] = 0;\n";
+              
+            }else{
+              erroSemantico( "Não é possível atribuir " + $3.t + " à " + $1.t );
+              
             }
           }
           ; 
@@ -335,13 +432,6 @@ CMD_DO_WHILE : _DO CMDS _WHILE '(' E ')' _END
             ; 
 
 /*============================
-Comando de chamada de Função:
-============================*/
-CMD_FUNCTION : _ID
-             | _ID '(' LISTA_E ')'
-             ;
-
-/*============================
 Operações:
 ============================*/
 E : E '+' E         { geraCodigoOperador( $$, $1, "+", $3 ); }
@@ -403,7 +493,9 @@ TIPOS : _INTEGER
 
 %%
 int n_label = 0;
-string delcaracaoVarLocal = "";
+string declaracaoVarLocal = "";
+string declaracaoPrototipo = "";
+string funcoes = "";
 int nlinha = 1;
 
 #include "lex.yy.c"
@@ -560,7 +652,21 @@ void geraCodigoOperador( Atributos& ss, Atributos s1, string op, Atributos s3 ) 
       conversoes += "\tstrncpy(" + strA + ", " + s1.v + ", 256);\n";
       ss.c = s1.c + s3.c + conversoes + "\tstrncpy(" + ss.v + ", " + strA + ", 256);\n\tstrcat(" + ss.v + ", " + strB + ");\n";
       
-    }    
+    }else if( (s1.t == "int" || s1.t == "bool") && s3.t == "string" ){
+      strA = criaTemp( "string" );
+      strB = criaTemp( "string" );
+      conversoes += "\tsprintf(" + strA + ", \"%i\", " + s1.v + ");\n";
+      conversoes += "\tstrncpy(" + strB + ", " + s3.v + ", 256);\n";
+      ss.c = s1.c + s3.c + conversoes + "\tstrncpy(" + ss.v + ", " + strA + ", 256);\n\tstrcat(" + ss.v + ", " + strB + ");\n";
+      
+    }else if( s1.t == "string" && (s3.t == "int" || s3.t == "bool") ){
+      strA = criaTemp( "string" );
+      strB = criaTemp( "string" );
+      conversoes += "\tsprintf(" + strB + ", \"%i\", " + s3.v + ");\n";
+      conversoes += "\tstrncpy(" + strA + ", " + s1.v + ", 256);\n";
+      ss.c = s1.c + s3.c + conversoes + "\tstrncpy(" + ss.v + ", " + strA + ", 256);\n\tstrcat(" + ss.v + ", " + strB + ");\n";
+      
+    } 
     
   }
 }
@@ -592,13 +698,12 @@ string buscaTipoVar( string nome ) {
   return ts[nome];
 }
 
-void adicionaCodigoDeclaracaoVarLocal( string codigo ) {
-  delcaracaoVarLocal += "\t" + codigo;
-}
-
-string geraCodigoDeclaracaoVarLocal() {
-  return delcaracaoVarLocal;
-}
+void adicionaCodigoDeclaracaoVarLocal( string varLocal ) {  declaracaoVarLocal += "\t" + varLocal; }
+void adicionaCodigoPrototipoFuncao( string prototipo ) { declaracaoPrototipo += prototipo; }
+void adicionaCodigoFuncao( string funcao ) { funcoes += funcao; }
+string geraCodigoDeclaracaoVarLocal() { return declaracaoVarLocal; }
+string geraCodigoPrototipoFuncao() { return declaracaoPrototipo + "\n"; }
+string geraCodigoFuncao() { return funcoes; }
 
 string toStr( int n ) {
   stringstream temp;

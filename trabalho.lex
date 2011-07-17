@@ -33,6 +33,7 @@ CHAR          [Cc][Hh][Aa][Rr]
 STRING        [Ss][Tt][Rr][Ii][Nn][Gg]
 BOOLEAN       [Bb][Oo][Oo][Ll][Ee][Aa][Nn]
 FUNCTION      [Ff][Uu][Nn][Cc][Tt][Ii][Oo][Nn]
+RETURN        [Rr][Ee][Tt][Uu][Rr][Nn]
 ARRAY         [Aa][Rr][Rr][Aa][Yy]
 
 AND           [Aa][Nn][Dd]
@@ -72,6 +73,7 @@ READ          [Rr][Ee][Aa][Dd]
 {STRING}        { yylval = Atributos( "string", "", "string" ); return _STRING; }
 {BOOLEAN}       { yylval = Atributos( "boolean", "", "bool" ); return _BOOLEAN; }
 {FUNCTION}      { return _FUNCTION; }
+{RETURN}        { yylval = Atributos( "return", "", "" ); return _RETURN; }
 {ARRAY}         { return _ARRAY; }
 
 {AND}           { return _AND; }

@@ -1,19 +1,28 @@
 var
 	## Declaração de variáveis
 	intero : integer
-	dobou_1, dobou_2 : double
+	dobou_1, dobou_2, dobou_3 : double
 	buleano : boolean
 	estringue_inicio, estringue_fim, estringue_final, estringue_status : string
 	xar : char
 	arrei : array[2] string
 end
 
-function soma ( dobou1, dobou2 : double )
+## Declaração de funções
+function soma ( dobou1 : double, dobou2 : double ) double
+	## Declaração de variável local
+	var
+		dobou : double
+	end
+	
+	## Código da função
+	dobou = dobou1 + dobou2
+	return dobou
 end
 
 
 begin
-    ## Atrinbuição de variáveis
+    ## Atribuição de variáveis
 	intero = 1
 	dobou_1 = 9.99
 	dobou_2 = 9.99
@@ -21,6 +30,10 @@ begin
 	estringue_inicio = "Início ..."
 	estringue_fim = "... Final"
 	xar = '!'
+	
+	## Chamada de função e atribuição
+	dobou_3 = soma(dobou_1, dobou_2)
+	print(dobou_3 + "\n\n")
 
 	## Teste de while
 	while ( intero < 5 ) do
@@ -40,21 +53,26 @@ begin
 
 	## Teste de if com operadores lógicos
 	if( intero and buleano ) do
-		print("Estou no If\n")
+		do ## Teste do bloco de operações
+			print("Estou no If\n\n")
+		end
 
 		## If dentro de outro if
 		if( dobou_1 == dobou_2 ) do 
-			print("dobou_1 = " + dobou_1 + " e é dobou_2 = " + dobou_2 + ". Logo eles são iguais!") ## if concatenado strings e doubles.
+			print("dobou_1 = " + dobou_1 + " e é dobou_2 = " + dobou_2 + ". Logo eles são iguais!\n\n") ## if concatenado strings e doubles.
 		else
-			if( dobou_1 > dobou_2 ) do ## if entre variáveis
-				print("dobou_1 = " + dobou_1 + " e é maior que dobou_2!")
+			if( dobou_1 > dobou_2 ) do ## if entre variáveis dentro do else
+				print("dobou_1 = " + dobou_1 + " e é maior que dobou_2!\n\n")
 			else
-				print("dobou_2 = " + dobou_2 + " e é maior que dobou_1!")
+				print("dobou_2 = " + dobou_2 + " e é maior que dobou_1!\n\n")
 			end
 		end
 	else
 		## Print de string
-		print("Estou no Else\n")
+		print("Estou no Else\n\n")
 	end
+	
+	## Concatenação entre inteiro e string
+	print("Mas intero passou a ser = " + intero + "...")
 
 end
