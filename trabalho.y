@@ -333,7 +333,7 @@ CMD_SAIDA : _PRINT '(' E ')'
               if( $3.t == "int" ){
               	$$.c += "\tprintf(\"%i\", " + $3.v + ");\n";
               }else if( $3.t == "double" ){
-              	$$.c += "\tprintf(\"%f\", " + $3.v + ");\n";
+              	$$.c += "\tprintf(\"%lf\", " + $3.v + ");\n";
               }else if( $3.t == "string" ){
               	$$.c += $3.c + "\tprintf(\"%s\", " + $3.v + ");\n";
               }else if( $3.t == "char" ){
@@ -344,7 +344,7 @@ CMD_SAIDA : _PRINT '(' E ')'
 CMD_ENTRADA : _READ '(' _ID ')' 
             {
               $$.v = "";
-              $$.c += "\tscanf(\"%d\", &" + $3.v + ");\n\tgetchar();\n";
+              $$.c = "\tcin >> " + $3.v + ";\n";
             }
             ;
 
