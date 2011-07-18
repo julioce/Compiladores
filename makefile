@@ -6,7 +6,7 @@ all: __saida.cc
 	./a.out
 
 __saida.cc: trabalho entrada.l
-	./trabalho.l < entrada > __saida.cc
+	./trabalho < entrada.l > __saida.cc
 
 lex.yy.c: trabalho.lex
 	lex trabalho.lex
