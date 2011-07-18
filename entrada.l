@@ -3,7 +3,7 @@ var
 	intero : integer
 	dobou_1, dobou_2, dobou_3 : double
 	buleano : boolean
-	estringue_inicio, estringue_fim, estringue_final, estringue_status : string
+	estringue_inicio, estringue_fim, estringue_final : string
 	xar : char
 	arrei : array[2] string
 end
@@ -60,6 +60,8 @@ begin
 		## If dentro de outro if
 		if( dobou_1 == dobou_2 ) do 
 			print("dobou_1 = " + dobou_1 + " e é dobou_2 = " + dobou_2 + ". Logo eles são iguais!\n\n") ## if concatenado strings e doubles.
+			## Concatenação entre inteiro e string
+			print("Mas intero passou a ser = " + intero + "...\n\n")
 		else
 			if( dobou_1 > dobou_2 ) do ## if entre variáveis dentro do else
 				print("dobou_1 = " + dobou_1 + " e é maior que dobou_2!\n\n")
@@ -72,7 +74,8 @@ begin
 		print("Estou no Else\n\n")
 	end
 	
-	## Concatenação entre inteiro e string
-	print("Mas intero passou a ser = " + intero + "...")
+	## Concatenação entre strings char
+	estringue_final = estringue_inicio + estringue_fim + xar
+	print( estringue_final )
 
 end

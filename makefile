@@ -5,8 +5,8 @@ all: __saida.cc
 	g++ __saida.cc
 	./a.out
 
-__saida.cc: trabalho entrada
-	./trabalho < entrada > __saida.cc
+__saida.cc: trabalho entrada.l
+	./trabalho.l < entrada > __saida.cc
 
 lex.yy.c: trabalho.lex
 	lex trabalho.lex
