@@ -72,7 +72,7 @@ PROGRAMA : BLOCO_PRINCIPAL { cout << "#include <iostream>\n"
                                      "using namespace std;\n\n" << $1.c << "\n" << endl; }
          ; 
 BLOCO_PRINCIPAL : DECLARACOES_GLOBAIS _BEGIN CMDS _END
-                { $$.c = $1.c + "\n" + geraCodigoDeclaracaoVarTemp() + geraCodigoPrototipoFuncao() + geraCodigoFuncao() + "\nint main() {\n" + geraCodigoDeclaracaoVarLocal() + "\n" + $3.c + "\treturn 0;\n}"; }
+                { $$.c = $1.c + "\n" + geraCodigoDeclaracaoVarTemp() + geraCodigoPrototipoFuncao() + geraCodigoFuncao() + "\nint main() {\n" + geraCodigoDeclaracaoVarLocal() + "\n" + $3.c + "\n\treturn 0;\n}"; }
                 ; 
 DECLARACOES_GLOBAIS : VAR DECLARACOES_GLOBAIS { $$.c = $1.c + $2.c; }
                     | FUN DECLARACOES_GLOBAIS { $$.c = $1.c; }
@@ -230,8 +230,6 @@ CMD_ATRIB : _ID _ATRIBUICAO E
             $1.t = buscaTipoVar( $1.v );
             $$.t = ""; 
             $$.v = "";
-            
-            $$.c = $3.c;
 
             if( ($1.t == $3.t && $1.t != "string") || ($1.t == "double" && $3.t == "int") ){
               $$.c += "\t" + $3.c + $1.v + " = " + $3.v + ";\n";
@@ -292,7 +290,7 @@ CMD_ATRIB : _ID _ATRIBUICAO E
             if( ($1.t == $3.t && $1.t != "string") || ($1.t == "double" && $3.t == "int") ){
               string varTemp = criaTemp( $3.t );
               $$.c = "\t" + varTemp + " = " + $3.v + "( " + $3.c + " );\n";
-              $$.c += "\t" + $1.v + " = " + varTemp + ";";
+              $$.c += "\t" + $1.v + " = " + varTemp + ";\n";
               
             }else if( $1.t == "string" && $3.t == "string" ){
               $$.c += "\tstrncpy(" + $1.v + ", " + $3.v + ", 256);\n";
@@ -633,8 +631,8 @@ void geraCodigoOperador( Atributos& ss, Atributos s1, string op, Atributos s3 ) 
       
     }else if( s1.t == "char" && s3.t == "char" ){
       strA = criaTemp( "string" );
-      conversoes += strA + "[0] = " + s1.v + ";\n" + "\t" + strA + "[1] = 0;\n";
       strB = criaTemp( "string" );
+      conversoes += strA + "[0] = " + s1.v + ";\n" + "\t" + strA + "[1] = 0;\n";
       conversoes += "\t" + strB + "[0] = " + s3.v + ";\n" + "\t" + strB + "[1] = 0;\n";
       ss.c = s1.c + s3.c + conversoes + "\tstrncpy(" + ss.v + ", " + strA + ", 256);\n\tstrcat(" + ss.v + ", " + strB + ");\n";
       
