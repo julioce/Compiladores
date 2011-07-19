@@ -563,6 +563,16 @@ struct Resultado {
   { "==", "bool", "double", "bool" },
   { "==", "bool", "bool", "bool" },
   
+  // Comparação aritimética !=
+  { "!=", "int", "int", "bool" },
+  { "!=", "int", "double", "bool" },
+  { "!=", "int", "bool", "bool" },
+  { "!=", "double", "double", "bool" },
+  { "!=", "double", "int", "bool" },
+  { "!=", "double", "bool", "bool" },
+  { "!=", "bool", "double", "bool" },
+  { "!=", "bool", "bool", "bool" },
+  
   //Comparação aritmética >
   { ">", "int", "int", "bool" },
   { ">", "int", "double", "bool" },
@@ -586,6 +596,7 @@ struct Resultado {
   { "<=", "int", "double", "bool" },
   { "<=", "double", "int", "bool" },
   { "<=", "double", "double", "bool" },
+  
   { "", "", "", "" }
 };
 

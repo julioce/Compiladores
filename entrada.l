@@ -25,6 +25,22 @@ begin
     ## Atribuição de variáveis por entrada do usuário
 	print("Digite um valor para a variável dobou_1: ")
 	read(dobou_1)
+	
+	## Teste de while
+	while ( intero < 5 ) do
+		print("Variável intero=")
+		print(intero)
+		print("!\n")
+		intero = intero + 1
+	end
+	
+	## Teste de for
+	for ( i=0 ; i<5 ) do
+		print("Variável i=")
+		print(i)
+		print("!\n")
+		i=i+1
+	end
 
 	## Atribuição por código
 	intero = 1
@@ -44,37 +60,20 @@ begin
 			print("Estou no If\n\n")
 		end
 
-		## If dentro de outro if
-		if( dobou_1 == dobou_2 ) do 
-			print("dobou_1 = " + dobou_1 + " e é dobou_2 = " + dobou_2 + ". Logo eles são iguais!\n\n") ## if concatenado strings e doubles.
-			## Concatenação entre inteiro e string
-			print("Mas intero passou a ser = " + intero + "...\n\n")
-		else
-			if( dobou_1 > dobou_2 ) do ## if entre variáveis dentro do else
+		## If com comparação entre variáveis
+		if( dobou_1 != dobou_2 ) do 
+			if( dobou_1 > dobou_2 ) do ## if entre variáveis dentro de outro if
 				print("dobou_1 = " + dobou_1 + " e é maior que dobou_2!\n\n")
 			else
 				print("dobou_2 = " + dobou_2 + " e é maior que dobou_1!\n\n")
 			end
+		else
+			print( "dobou_1 e dobou_2 são iguais!" )
+			
 		end
 	else
 		## Print de string
 		print("Estou no Else\n\n")
-	end
-
-	## Teste de while
-	while ( intero < 5 ) do
-		print("Variável intero=")
-		print(intero)
-		print("!\n")
-		intero = intero + 1
-	end
-	
-	## Teste de for
-	for ( i=0 ; i<5 ) do
-		print("Variável i=")
-		print(i)
-		print("!\n")
-		i=i+1
 	end
 	
 	## Concatenação entre strings e char
