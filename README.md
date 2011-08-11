@@ -1,4 +1,4 @@
-## -=-=-=-=-=- Compilador Linguagem Aline -=-=-=-=-=-
+### -=-=-=-=-=- Compilador Linguagem Aline -=-=-=-=-=-
 
 ### 1 - Motivação:
     Criar um compilador e a sua respectiva linguagem para a Disciplina de Compiladroes 1 do curso de Ciência da Computação - UFRJ.
@@ -6,9 +6,9 @@
 
 
 ### 2 - Descrição:
-    O compilador irá ler um programa nessa linguagem e gerar código em C (com algumas restrições - C-assembly).
-    Esse código em C será compilado pelo g++ produzindo um executável.
-    Considere a seguinte expressão a ser traduzida:
+    O compilador irá ler um programa especificado no arquivo de entrada em Aline e gerará código em C (com algumas restrições - C-assembly).
+    Este código C-Assembly é um código C que utiliza uma semâtica próxima ao Assembly.
+    Em seguida código em C será compilado pelo g++ produzindo um executável.Considere a seguinte expressão a ser traduzida:
     
     c = a * b + 1;
     
@@ -95,8 +95,10 @@
     Todo o processo de verificação sintática, semântica, exibição de código C-Assembly gerado e execução do programa é transparente ao usuário. Ele se encontra no arquivo makefile. Bastando executarmos no diretório desejado onde se encontra os arquivos do compilador:
 	`$ make`
 	
-    Caso haja alguma problema na execução do makefile recomenda-se a execução serial de cada comando do makefile individualmente.
-	
-### 6 - Bugs:
+	No makefile está especificado o nome e extenção do arquivo de entrada. Você pode facilmente modifica-los ao se desejo.
+	Após a geraçào
+    Caso haja alguma problema na execução do makefile recomenda-se:
+        * A execução serial de cada comando do makefile individualmente como debug.
+        * Consulta ao arquivo de entrada.
 	
 		
