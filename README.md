@@ -120,5 +120,10 @@ No makefile está especificado o nome e extenção do arquivo de entrada. Você 
 Caso haja alguma problema na execução do makefile recomenda-se:
 * A execução serial de cada comando do makefile individualmente como debug.
 * Consulta ao arquivo de entrada.
+
+Este README tem apenas como função analisar brevemente o uso/utilidade do programa assim como o seu funcionamento básico. Mais detalhes sobre o seu uso deve ser feito através da depuração do código fonte.
 	
-		
+O programa foi escrito a fim de demonstrar as caracterísitcas do trabalho proposto. Dessa forma, o programa tem finalidade educacional e se comporta de forma independente. O seu uso em aplicações de alto risco e missão crítica não é recomendado.
+
+Não há intenções por parte do desenvolvedor na manutenção deste repositório nem atualizações referentes a implementações de novos métodos/funcionalidades.
+No entanto, você é livre para utilizá-lo e prosseguir em seu desenvolvimento de acordo com as normas BY-NC-SA - Creative Commons License. 
